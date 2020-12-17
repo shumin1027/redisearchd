@@ -1,0 +1,160 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {},
+        "license": {}
+    },
+    "paths": {
+        "/docs": {
+            "post": {
+                "description": "Create Docs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Create Docs"
+            },
+            "delete": {
+                "description": "Batch Delete Docs By Ids",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Batch Delete Docs By Ids"
+            }
+        },
+        "/docs/{id}": {
+            "get": {
+                "description": "Get Doc By Id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Get Doc By Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "doc id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            },
+            "delete": {
+                "description": "Delete One Doc By Id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Delete One Doc By Id"
+            }
+        },
+        "/index/{index}": {
+            "get": {
+                "description": "Get Index Info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "index"
+                ],
+                "summary": "Get Index Info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "index",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            },
+            "post": {
+                "description": "Create an index. `schema.fields.type`: `0`-`Text`;`1`-`Numeric`;`2`-`Geo`;`3`-`Tag`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "index"
+                ],
+                "summary": "Create an index",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "index",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            },
+            "delete": {
+                "description": "Delete an index",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "index"
+                ],
+                "summary": "Delete an index",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "index",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "delete document",
+                        "name": "deldocs",
+                        "in": "query"
+                    }
+                ]
+            }
+        },
+        "/indexes": {
+            "get": {
+                "description": "List all indexes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "index"
+                ],
+                "summary": "List all indexes"
+            }
+        },
+        "/search/{index}": {
+            "get": {
+                "description": "Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Search in an index with POST",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "index",
+                        "in": "path",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    }
+}

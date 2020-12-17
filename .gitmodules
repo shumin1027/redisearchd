@@ -1,0 +1,4 @@
+[submodule "libs/redisearch-go"]
+	path = libs/redisearch-go
+	url = git@gitlab.xtc.home:xtc/redisearch-go.git
+	branch = develop

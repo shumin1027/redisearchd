@@ -1,0 +1,107 @@
+info:
+  contact: {}
+  license: {}
+paths:
+  /docs:
+    delete:
+      description: Batch Delete Docs By Ids
+      produces:
+      - application/json
+      summary: Batch Delete Docs By Ids
+      tags:
+      - doc
+    post:
+      description: Create Docs
+      produces:
+      - application/json
+      summary: Create Docs
+      tags:
+      - doc
+  /docs/{id}:
+    delete:
+      description: Delete One Doc By Id
+      produces:
+      - application/json
+      summary: Delete One Doc By Id
+      tags:
+      - doc
+    get:
+      description: Get Doc By Id
+      parameters:
+      - description: doc id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: Get Doc By Id
+      tags:
+      - doc
+  /index/{index}:
+    delete:
+      description: Delete an index
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      - description: delete document
+        in: query
+        name: deldocs
+        type: boolean
+      produces:
+      - application/json
+      summary: Delete an index
+      tags:
+      - index
+    get:
+      description: Get Index Info
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: Get Index Info
+      tags:
+      - index
+    post:
+      description: 'Create an index. `schema.fields.type`: `0`-`Text`;`1`-`Numeric`;`2`-`Geo`;`3`-`Tag`'
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: Create an index
+      tags:
+      - index
+  /indexes:
+    get:
+      description: List all indexes
+      produces:
+      - application/json
+      summary: List all indexes
+      tags:
+      - index
+  /search/{index}:
+    get:
+      description: Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: Search in an index with POST
+      tags:
+      - search
+swagger: "2.0"

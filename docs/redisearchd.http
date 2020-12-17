@@ -1,0 +1,149 @@
+@server=http://127.0.0.1:8080
+
+### 创建索引
+### schema.fields.type: 0-Text;1-Numeric;2-Geo;3-Tag
+POST  {{server}}/indexes/test
+Content-Type: application/json
+
+{
+    "schema": {
+        "fields": [
+            {
+                "name": "title",
+                "type": "Text",
+                "sortable": true
+            },
+            {
+                "name": "body",
+                "type": "Text",
+                "sortable": false
+            },
+            {
+                "name": "data",
+                "type": "Numeric",
+                "sortable": true
+            }
+        ]
+    },
+    "index_definition": {
+        "index_on": "HASH",
+        "prefix": [
+            "test:"
+        ],
+        "async": false
+    }
+}
+
+### 查询所有索引（名称列表）
+GET {{server}}/indexes
+
+### 查询索引信息
+GET {{server}}/indexes/test
+
+### 删除索引
+DELETE {{server}}/indexes/test
+
+### 根据ID获取文档
+GET {{server}}/docs/test:1
+
+### 批量创建文档
+POST {{server}}/docs
+Content-Type: application/json
+
+[
+    {
+        "id": "test:0",
+        "properties": {
+            "body": "this is body",
+            "date": 0,
+            "title": "this_is_title"
+        }
+    },
+    {
+        "id": "test:1",
+        "properties": {
+            "body": "this is body",
+            "date": 1,
+            "title": "this is title"
+        }
+    },
+    {
+        "id": "test:2",
+        "properties": {
+            "body": "this is body",
+            "date": 2,
+            "title": "this-is-title"
+        }
+    },
+    {
+        "id": "test:3",
+        "properties": {
+            "body": "this is body",
+            "date": 3,
+            "title": "t3"
+        }
+    },
+    {
+        "id": "test:4",
+        "properties": {
+            "body": "this is body",
+            "date": 4,
+            "title": "t4"
+        }
+    },
+    {
+        "id": "test:5",
+        "properties": {
+            "body": "this is body",
+            "date": 5,
+            "title": "t5"
+        }
+    }
+]
+
+
+### 删除文档
+DELETE  {{server}}/docs/test:0
+Content-Type: application/json
+
+
+### 批量删除文档
+DELETE  {{server}}/docs
+Content-Type: application/json
+
+[
+    "test:0","test:1"
+]
+
+
+
+### 查询文档
+GET  {{server}}/search/test?raw=*&num=100&offset=0
+Content-Type: application/json
+
+
+### 查询文档
+POST {{server}}/search/test
+Content-Type: application/json
+
+{
+    "raw": "@title:t3",
+    "paging": {
+        "offset": 0,
+        "num": 10
+    },
+    "flags": 0,
+    "slop": 0,
+    "filters": null,
+    "in_keys": null,
+    "in_fields": null,
+    "return_fields": null,
+    "language": "",
+    "expander": "",
+    "scorer": "",
+    "payload": null,
+    "sort_by": null,
+    "highlight_opts": null,
+    "summarize_opts": null
+}
+
