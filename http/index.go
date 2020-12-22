@@ -32,6 +32,7 @@ func (r *IndexRouter) Route() {
 // @Produce application/json
 // @Tags index
 // @Router /indexes [GET]
+// @Success 200 {array} string
 func List(c *gin.Context) {
 	cli := conn.DummyClient()
 	indexes, _ := self.ListIndexes(c.Request.Context(), cli)
@@ -42,8 +43,9 @@ func List(c *gin.Context) {
 // @Description Get Index Info
 // @Produce application/json
 // @Tags index
-// @Router /index/{index} [GET]
+// @Router /indexes/{index} [GET]
 // @Param index path string true "index name"
+// @Success 200 {object} redisearch.IndexInfo
 func Info(c *gin.Context) {
 	index := c.Param("index")
 	cli := conn.Client(index)
@@ -59,9 +61,10 @@ func Info(c *gin.Context) {
 // @Description Delete an index
 // @Produce application/json
 // @Tags index
-// @Router /index/{index} [DELETE]
+// @Router /indexes/{index} [DELETE]
 // @Param index path string true "index name"
 // @Param deldocs query bool false "delete document"
+// @Success 200 {string} string ""
 func DropIndex(c *gin.Context) {
 	deldocs := false
 	index := c.Param("index")
@@ -86,8 +89,9 @@ type CreateIndexReq struct {
 // @Description Create an index. `schema.fields.type`: `0`-`Text`;`1`-`Numeric`;`2`-`Geo`;`3`-`Tag`
 // @Produce application/json
 // @Tags index
-// @Router /index/{index} [POST]
+// @Router /indexes/{index} [POST]
 // @Param index path string true "index name"
+// @Success 200 {string} string ""
 func CreateIndex(c *gin.Context) {
 	var req CreateIndexReq
 	body, err := ioutil.ReadAll(c.Request.Body)

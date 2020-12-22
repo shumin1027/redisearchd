@@ -14,7 +14,15 @@
                 "tags": [
                     "doc"
                 ],
-                "summary": "Create Docs"
+                "summary": "Create Docs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "delete": {
                 "description": "Batch Delete Docs By Ids",
@@ -24,7 +32,15 @@
                 "tags": [
                     "doc"
                 ],
-                "summary": "Batch Delete Docs By Ids"
+                "summary": "Batch Delete Docs By Ids",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/docs/{id}": {
@@ -45,7 +61,15 @@
                         "in": "path",
                         "required": true
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/redisearch.Document"
+                        }
+                    }
+                }
             },
             "delete": {
                 "description": "Delete One Doc By Id",
@@ -55,10 +79,41 @@
                 "tags": [
                     "doc"
                 ],
-                "summary": "Delete One Doc By Id"
+                "summary": "Delete One Doc By Id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
-        "/index/{index}": {
+        "/indexes": {
+            "get": {
+                "description": "List all indexes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "index"
+                ],
+                "summary": "List all indexes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/indexes/{index}": {
             "get": {
                 "description": "Get Index Info",
                 "produces": [
@@ -76,7 +131,15 @@
                         "in": "path",
                         "required": true
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/redisearch.IndexInfo"
+                        }
+                    }
+                }
             },
             "post": {
                 "description": "Create an index. `schema.fields.type`: `0`-`Text`;`1`-`Numeric`;`2`-`Geo`;`3`-`Tag`",
@@ -95,7 +158,15 @@
                         "in": "path",
                         "required": true
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "delete": {
                 "description": "Delete an index",
@@ -120,23 +191,112 @@
                         "name": "deldocs",
                         "in": "query"
                     }
-                ]
-            }
-        },
-        "/indexes": {
-            "get": {
-                "description": "List all indexes",
-                "produces": [
-                    "application/json"
                 ],
-                "tags": [
-                    "index"
-                ],
-                "summary": "List all indexes"
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/search/{index}": {
             "get": {
+                "description": "Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Search in an index with GET",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "index",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": " the text query to search",
+                        "name": "raw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "maximum number of documents returned. default is `10`;max is `1_000_000`. when num is `0`, just return the count",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "number of documents to skip，default is `0`",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "If set, we limit the result to a given set of keys specified in the list. ",
+                        "name": "in_keys",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": " If set, filter the results to ones appearing only in specific fields of the document, like title or URL. num is the number of specified field arguments ",
+                        "name": "in_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Use this keyword to limit which fields from the document are returned.e.g: `return_fields=id,name,age` ",
+                        "name": "return_fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "If specified, the results are ordered by the value of this field. This applies to both text and numeric fields. e.g: `sort_by=name|asc`",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "If set, we use a stemmer for the supplied language during search for query expansion",
+                        "name": "language",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/redisearch.Document"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
                 "description": "Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).",
                 "produces": [
                     "application/json"
@@ -153,7 +313,166 @@
                         "in": "path",
                         "required": true
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/redisearch.Document"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "redisearch.Document": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "score": {
+                    "type": "number"
+                }
+            }
+        },
+        "redisearch.Field": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "object"
+                },
+                "sortable": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "redisearch.IndexInfo": {
+            "type": "object",
+            "properties": {
+                "bytesPerRecordAvg": {
+                    "type": "number"
+                },
+                "docCount": {
+                    "type": "integer"
+                },
+                "docTableSizeMB": {
+                    "type": "number"
+                },
+                "invertedIndexSizeMB": {
+                    "type": "number"
+                },
+                "isIndexing": {
+                    "type": "boolean"
+                },
+                "keyTableSizeMB": {
+                    "type": "number"
+                },
+                "maxDocID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "offsetBitsPerTermAvg": {
+                    "type": "number"
+                },
+                "offsetVectorSizeMB": {
+                    "type": "number"
+                },
+                "offsetsPerTermAvg": {
+                    "type": "number"
+                },
+                "percentIndexed": {
+                    "type": "number"
+                },
+                "recordCount": {
+                    "type": "integer"
+                },
+                "recordsPerDocAvg": {
+                    "type": "number"
+                },
+                "schema": {
+                    "type": "object",
+                    "$ref": "#/definitions/redisearch.Schema"
+                },
+                "termCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "redisearch.Options": {
+            "type": "object",
+            "properties": {
+                "maxTextFieldsFlag": {
+                    "description": "For efficiency, RediSearch encodes indexes differently if they are created with less than 32 text fields.\nIf set to true This option forces RediSearch to encode indexes as if there were more than 32 text fields,\nwhich allows you to add additional fields (beyond 32).",
+                    "type": "boolean"
+                },
+                "noFieldFlags": {
+                    "description": "If set, we avoid saving field bits for each term.\nThis saves memory, but does not allow filtering by specific fields.\nThis is an option that is applied and index level.",
+                    "type": "boolean"
+                },
+                "noFrequencies": {
+                    "description": "If set, we avoid saving the term frequencies in the index.\nThis saves memory but does not allow sorting based on the frequencies of a given term within the document.\nThis is an option that is applied and index level.",
+                    "type": "boolean"
+                },
+                "noOffsetVectors": {
+                    "description": "If set, , we avoid saving the term offsets for documents.\nThis saves memory but does not allow exact searches or highlighting. Implies NOHL\nThis is an option that is applied and index level.",
+                    "type": "boolean"
+                },
+                "noSave": {
+                    "description": "If set, we will not save the documents contents, just index them, for fetching ids only.",
+                    "type": "boolean"
+                },
+                "stopwords": {
+                    "description": "Set the index with a custom stop-words list, to be ignored during indexing and search time\nThis is an option that is applied and index level.\nIf the list is nil the default stop-words list is used.\nSee https://oss.redislabs.com/redisearch/Stopwords.html#default_stop-word_list",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "temporary": {
+                    "description": "If set to true, creates a lightweight temporary index which will expire after the specified period of inactivity.\nThe internal idle timer is reset whenever the index is searched or added to.\nBecause such indexes are lightweight, you can create thousands of such indexes without negative performance implications.",
+                    "type": "boolean"
+                },
+                "temporaryPeriod": {
+                    "type": "integer"
+                }
+            }
+        },
+        "redisearch.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/redisearch.Field"
+                    }
+                },
+                "options": {
+                    "type": "object",
+                    "$ref": "#/definitions/redisearch.Options"
+                }
             }
         }
     }

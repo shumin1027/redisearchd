@@ -118,7 +118,7 @@ Content-Type: application/json
 
 
 ### 查询文档
-GET  {{server}}/search/test?raw=*&num=100&offset=0
+GET  {{server}}/search/test?raw=*&limit=100&offset=0
 Content-Type: application/json
 
 

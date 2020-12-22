@@ -73,7 +73,7 @@ func Route(e *gin.Engine) *gin.Engine {
 // @version 1.0
 // @Description RediSearchs API
 // @host localhost:8080
-// @BasePath /api/v1
+// @BasePath /
 func Start(addr string) {
 	server = &http.Server{
 		Addr:    addr,

@@ -32,6 +32,7 @@ func (r *DocRouter) Route() {
 // @Tags doc
 // @Router /docs/{id} [GET]
 // @Param id path string true "doc id"
+// @Success 200 {object} redisearch.Document
 func GetDocById(c *gin.Context) {
 	id := c.Param("id")
 	fields := c.Query("fields")
@@ -48,6 +49,7 @@ func GetDocById(c *gin.Context) {
 // @Produce application/json
 // @Tags doc
 // @Router /docs [POST]
+// @Success 200 {string} string ""
 func CreateDocs(c *gin.Context) {
 	var docs self.DocumentList
 	body, err := ioutil.ReadAll(c.Request.Body)
@@ -72,6 +74,7 @@ func CreateDocs(c *gin.Context) {
 // @Produce application/json
 // @Tags doc
 // @Router /docs/{id} [DELETE]
+// @Success 200 {string} string ""
 func DeleteDocById(c *gin.Context) {
 	id := c.Param("id")
 
@@ -89,6 +92,7 @@ func DeleteDocById(c *gin.Context) {
 // @Produce application/json
 // @Tags doc
 // @Router /docs [DELETE]
+// @Success 200 {string} string ""
 func DeleteDocs(c *gin.Context) {
 	var ids []string
 	body, err := ioutil.ReadAll(c.Request.Body)
@@ -106,5 +110,6 @@ func DeleteDocs(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, "")
 }
