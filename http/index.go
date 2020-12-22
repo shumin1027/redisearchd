@@ -68,7 +68,7 @@ func Info(c *gin.Context) {
 // @Router /indexes/{index} [DELETE]
 // @Param index path string true "index name"
 // @Param deldocs query bool false "delete document"
-// @Success 200 {string} string ""
+// @Success 204 {string} string ""
 func DropIndex(c *gin.Context) {
 	deldocs := false
 	index := c.Param("index")
@@ -81,7 +81,7 @@ func DropIndex(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	c.String(http.StatusOK, "")
+	c.String(http.StatusNoContent, "")
 }
 
 type CreateIndexReq struct {

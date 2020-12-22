@@ -74,7 +74,7 @@ func CreateDocs(c *gin.Context) {
 // @Produce application/json
 // @Tags doc
 // @Router /docs/{id} [DELETE]
-// @Success 200 {string} string ""
+// @Success 204 {string} string ""
 func DeleteDocById(c *gin.Context) {
 	id := c.Param("id")
 
@@ -84,7 +84,7 @@ func DeleteDocById(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, "")
+	c.String(http.StatusNoContent, "")
 }
 
 // @Summary Batch Delete Docs By Ids
@@ -92,7 +92,7 @@ func DeleteDocById(c *gin.Context) {
 // @Produce application/json
 // @Tags doc
 // @Router /docs [DELETE]
-// @Success 200 {string} string ""
+// @Success 204 {string} string ""
 func DeleteDocs(c *gin.Context) {
 	var ids []string
 	body, err := ioutil.ReadAll(c.Request.Body)
@@ -111,5 +111,5 @@ func DeleteDocs(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, "")
+	c.String(http.StatusNoContent, "")
 }
