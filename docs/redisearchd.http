@@ -116,13 +116,12 @@ Content-Type: application/json
 ]
 
 
-
-### 查询文档
+### 查询文档[GET]
 GET  {{server}}/search/test?raw=*&limit=100&offset=0
 Content-Type: application/json
 
 
-### 查询文档
+### 查询文档[POST]
 POST {{server}}/search/test
 Content-Type: application/json
 
@@ -146,4 +145,5 @@ Content-Type: application/json
     "highlight_opts": null,
     "summarize_opts": null
 }
+
 

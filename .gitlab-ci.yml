@@ -1,0 +1,26 @@
+stages:
+  - build
+
+build:linux:x86_64:
+  stage: build
+  tags:
+    - x86_64
+  script:
+    - make build
+  artifacts:
+    name: "redisearchd_linux-x86_64"
+    paths:
+      - bin
+    expire_in: 1 week
+
+build:linux:arm64:
+  stage: build
+  tags:
+    - arm
+  script:
+    - make build
+  artifacts:
+    name: "redisearchd_linux-arm64"
+    paths:
+      - bin
+    expire_in: 1 week

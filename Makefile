@@ -6,6 +6,10 @@ vet:
 	@echo ">> vetting code"
 	go vet $(PKGS)
 
+fmt:
+	@echo ">> fmt code"
+	go fmt $(PKGS)
+
 build:
 	@echo ">> building code"
 	go build -mod=vendor -tags=jsoniter -ldflags='-w -s' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
@@ -15,6 +19,6 @@ clean:
 	rm -rf $(BUILDDIR)
 
 api-doc:
-	@echo "Generating Package..."
+	@echo "generating api doc..."
 	swag init http/router.go
 	@echo "Done."

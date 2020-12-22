@@ -40,8 +40,7 @@ func print() {
 	fmt.Println(string(result))
 }
 
-
-var data  = `
+var data = `
 {
     "Raw": "*",
     "Paging": {
@@ -63,9 +62,10 @@ var data  = `
     "SummarizeOpts": null
 }
 `
+
 func TestUn(t *testing.T) {
 	var query = new(redisearch.Query)
 	bytes := []byte(data)
-	jsoniter.Unmarshal(bytes,query)
+	jsoniter.Unmarshal(bytes, query)
 	println(query.Raw)
 }

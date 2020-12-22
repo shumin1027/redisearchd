@@ -35,7 +35,11 @@ func (r *IndexRouter) Route() {
 // @Success 200 {array} string
 func List(c *gin.Context) {
 	cli := conn.DummyClient()
-	indexes, _ := self.ListIndexes(c.Request.Context(), cli)
+	indexes, err := self.ListIndexes(c.Request.Context(), cli)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 	c.JSON(http.StatusOK, indexes)
 }
 
