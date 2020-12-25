@@ -537,7 +537,7 @@ func (i *Client) List() ([]string, error) {
 	var indexes []string
 
 	// Iterate over the values
-	for ii := 0; ii < len(res); ii += 2 {
+	for ii := 0; ii < len(res); ii += 1 {
 		key, _ := redis.String(res[ii], nil)
 		indexes = append(indexes, key)
 	}
