@@ -38,7 +38,7 @@ Content-Type: application/json
 GET {{server}}/indexes
 
 ### 查询索引信息
-GET {{server}}/indexes/test
+GET {{server}}/indexes/queues
 
 ### 删除索引
 DELETE {{server}}/indexes/test
@@ -122,11 +122,11 @@ Content-Type: application/json
 
 
 ### 查询文档[POST]
-POST {{server}}/search/test
+POST {{server}}/search/queues
 Content-Type: application/json
 
 {
-    "raw": "@title:t3",
+    "raw": "*",
     "paging": {
         "offset": 0,
         "num": 10

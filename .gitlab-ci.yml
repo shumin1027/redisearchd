@@ -1,26 +1,57 @@
 stages:
   - build
 
-build:linux:x86_64:
+# amd64
+build:ubuntu_amd64:
   stage: build
   tags:
-    - x86_64
+    - amd64
+    - ubuntu
   script:
     - make build
   artifacts:
-    name: "redisearchd_linux-x86_64"
+    name: "redisearchd_ubuntu_amd64"
     paths:
       - bin
     expire_in: 1 week
 
-build:linux:arm64:
+build:centos_amd64:
   stage: build
   tags:
-    - arm
+    - amd64
+    - centos
   script:
     - make build
   artifacts:
-    name: "redisearchd_linux-arm64"
+    name: "redisearchd_centos_amd64"
     paths:
       - bin
     expire_in: 1 week
+
+# arm64
+build:ubuntu_arm64:
+  stage: build
+  tags:
+    - arm64
+    - ubuntu
+  script:
+    - make build
+  artifacts:
+    name: "redisearchd_ubuntu_arm64"
+    paths:
+      - bin
+    expire_in: 1 week
+
+build:centos_arm64:
+  stage: build
+  tags:
+    - arm64
+    - centos
+  script:
+    - make build
+  artifacts:
+    name: "redisearchd_centos_arm64"
+    paths:
+      - bin
+    expire_in: 1 week
+
