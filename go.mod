@@ -29,9 +29,9 @@ require (
 	github.com/swaggo/swag v1.7.0
 	github.com/ugorji/go v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
-	golang.org/x/net v0.0.0-20201216054612-986b41b23924 // indirect
-	golang.org/x/sys v0.0.0-20201221093633-bc327ba9c2f0 // indirect
-	golang.org/x/tools v0.0.0-20201221201019-196535612888 // indirect
+	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
+	golang.org/x/sys v0.0.0-20210105210732-16f7687f5001 // indirect
+	golang.org/x/tools v0.0.0-20210106214847-113979e3529a // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 )
