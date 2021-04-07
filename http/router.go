@@ -37,14 +37,32 @@ func init() {
 // 注册路由
 func Route(a *fiber.App) *fiber.App {
 
+	// Recover Middleware
 	app.Use(recover.New())
 
+	// Recover Middleware
+	app.Use(recover.New())
+
+	// Log Middleware
 	app.Use(logger.New(logger.Config{
 		Format:       "${time} ${locals:requestid} ${status} - ${latency} ${method} ${path}\n",
 		TimeFormat:   "2006/01/02 15:04:05",
 		TimeZone:     "Local",
 		TimeInterval: 500 * time.Millisecond,
 	}))
+
+	// Duration Middleware
+	a.Use(func(c *fiber.Ctx) error {
+		var start, stop time.Time
+		start = time.Now()
+		if chainErr := c.Next(); chainErr != nil {
+			return chainErr
+		}
+		stop = time.Now()
+		duration := stop.Sub(start).Round(time.Nanosecond)
+		c.Set("X-Request-Duration", duration.String())
+		return nil
+	})
 
 	// swagger api docs url: /swagger/index.html
 	app.Get("/swagger/*", swagger.Handler) // default
