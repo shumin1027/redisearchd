@@ -1,8 +1,8 @@
 package http
 
 import (
-	"encoding/json"
 	"github.com/gofiber/fiber/v2"
+	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	"net/http"
 	"strings"
 
@@ -10,6 +10,7 @@ import (
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
+
 
 type IndexRouter struct {
 	*fiber.Group

@@ -22,7 +22,6 @@ import (
 	"github.com/spf13/viper"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	"gitlab.xtc.home/xtc/redisearchd/http"
-	_ "gitlab.xtc.home/xtc/redisearchd/pkg/json"
 	"os"
 )
 

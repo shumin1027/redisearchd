@@ -12,7 +12,7 @@ fmt:
 
 build:
 	@echo ">> building code"
-	go build -mod=vendor -ldflags='-w -s -linkmode=external' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
+	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
 
 clean:
 	@echo ">> clean build"
