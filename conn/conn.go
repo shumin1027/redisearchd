@@ -42,3 +42,7 @@ func Client(index string) *redisearch.Client {
 func DummyClient() *redisearch.Client {
 	return Client("_redisearchd_")
 }
+
+func Close() {
+	pool.Close()
+}

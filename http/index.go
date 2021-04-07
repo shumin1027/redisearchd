@@ -1,30 +1,33 @@
 package http
 
 import (
-	"io/ioutil"
+	"encoding/json"
+	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"strings"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
 type IndexRouter struct {
-	*gin.RouterGroup
+	*fiber.Group
 }
 
-func NewIndexRouter(r *gin.RouterGroup) *IndexRouter {
-	return &IndexRouter{r}
+func NewIndexRouter(r fiber.Router) *IndexRouter {
+	g, ok := r.(*fiber.Group)
+	if ok {
+		return &IndexRouter{g}
+	}
+	return nil
 }
 
 func (r *IndexRouter) Route() {
-	r.GET("", List)
-	r.GET("/:index", Info)
-	r.POST("/:index", CreateIndex)
-	r.DELETE("/:index", DropIndex)
+	r.Get("", List)
+	r.Get("/:index", Info)
+	r.Post("/:index", CreateIndex)
+	r.Delete("/:index", DropIndex)
 }
 
 // @Summary List all indexes
@@ -33,14 +36,13 @@ func (r *IndexRouter) Route() {
 // @Tags index
 // @Router /indexes [GET]
 // @Success 200 {array} string
-func List(c *gin.Context) {
+func List(c *fiber.Ctx) error {
 	cli := conn.DummyClient()
-	indexes, err := self.ListIndexes(c.Request.Context(), cli)
+	indexes, err := self.ListIndexes(c.Context(), cli)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, indexes)
+	return c.Status(http.StatusOK).JSON(indexes)
 }
 
 // @Summary Get Index Info
@@ -50,15 +52,14 @@ func List(c *gin.Context) {
 // @Router /indexes/{index} [GET]
 // @Param index path string true "index name"
 // @Success 200 {object} redisearch.IndexInfo
-func Info(c *gin.Context) {
-	index := c.Param("index")
+func Info(c *fiber.Ctx) error {
+	index := c.Params("index")
 	cli := conn.Client(index)
-	info, err := self.Info(c.Request.Context(), cli)
+	info, err := self.Info(c.Context(), cli)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, info)
+	return c.Status(http.StatusOK).JSON(info)
 }
 
 // @Summary Delete an index
@@ -69,19 +70,18 @@ func Info(c *gin.Context) {
 // @Param index path string true "index name"
 // @Param deldocs query bool false "delete document"
 // @Success 204 {string} string ""
-func DropIndex(c *gin.Context) {
+func DropIndex(c *fiber.Ctx) error {
 	deldocs := false
-	index := c.Param("index")
+	index := c.Params("index")
 	if len(c.Query("deldocs")) > 0 && strings.ToLower(c.Query("deldocs")) == "true" {
 		deldocs = true
 	}
 	cli := conn.Client(index)
-	err := self.DropIndex(c.Request.Context(), cli, deldocs)
+	err := self.DropIndex(c.Context(), cli, deldocs)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.String(http.StatusNoContent, "")
+	return c.SendStatus(http.StatusNoContent)
 }
 
 type CreateIndexReq struct {
@@ -96,22 +96,16 @@ type CreateIndexReq struct {
 // @Router /indexes/{index} [POST]
 // @Param index path string true "index name"
 // @Success 200 {string} string ""
-func CreateIndex(c *gin.Context) {
+func CreateIndex(c *fiber.Ctx) error {
 	var req CreateIndexReq
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+	body := c.Request().Body()
+	if err := json.Unmarshal(body, &req); err != nil {
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	if err := jsoniter.Unmarshal(body, &req); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-	index := c.Param("index")
+	index := c.Params("index")
 	cli := conn.Client(index)
-	if err := self.CreateIndex(c.Request.Context(), cli, req.Schema, req.IndexDefinition); err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+	if err := self.CreateIndex(c.Context(), cli, req.Schema, req.IndexDefinition); err != nil {
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, "")
+	return c.SendStatus(http.StatusCreated)
 }

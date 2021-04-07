@@ -1,29 +1,31 @@
 package http
 
 import (
-	"io/ioutil"
-	"net/http"
-	"strings"
-
-	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
+	"encoding/json"
+	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
+	"net/http"
+	"strings"
 )
 
 type DocRouter struct {
-	*gin.RouterGroup
+	*fiber.Group
 }
 
-func NewDocRouter(group *gin.RouterGroup) *DocRouter {
-	return &DocRouter{group}
+func NewDocRouter(r fiber.Router) *DocRouter {
+	g, ok := r.(*fiber.Group)
+	if ok {
+		return &DocRouter{g}
+	}
+	return nil
 }
 
 func (r *DocRouter) Route() {
-	r.GET("/:id", GetDocById)
-	r.POST("", CreateDocs)
-	r.DELETE("", DeleteDocs)
-	r.DELETE("/:id", DeleteDocById)
+	r.Get("/:id", GetDocById)
+	r.Post("", CreateDocs)
+	r.Delete("", DeleteDocs)
+	r.Delete("/:id", DeleteDocById)
 }
 
 // @Summary Get Doc By Id
@@ -33,15 +35,14 @@ func (r *DocRouter) Route() {
 // @Router /docs/{id} [GET]
 // @Param id path string true "doc id"
 // @Success 200 {object} redisearch.Document
-func GetDocById(c *gin.Context) {
-	id := c.Param("id")
+func GetDocById(c *fiber.Ctx) error {
+	id := c.Params("id")
 	fields := c.Query("fields")
-	doc, err := self.GetDocById(c.Request.Context(), conn.ConnPool(), id, strings.Split(fields, ",")...)
+	doc, err := self.GetDocById(c.Context(), conn.ConnPool(), id, strings.Split(fields, ",")...)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, doc)
+	return c.Status(http.StatusOK).JSON(doc)
 }
 
 // @Summary Create Docs
@@ -50,23 +51,19 @@ func GetDocById(c *gin.Context) {
 // @Tags doc
 // @Router /docs [POST]
 // @Success 200 {string} string ""
-func CreateDocs(c *gin.Context) {
+func CreateDocs(c *fiber.Ctx) error {
 	var docs self.DocumentList
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
-	if err := jsoniter.Unmarshal(body, &docs); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+	body := c.Request().Body()
+
+	if err := json.Unmarshal(body, &docs); err != nil {
+		return c.SendString(err.Error())
 	}
 	conn := conn.ConnPool()
-	err = self.AddDocs(c.Request.Context(), conn, docs...)
+	err := self.AddDocs(c.Context(), conn, docs...)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, "")
+	return c.SendStatus(http.StatusCreated)
 }
 
 // @Summary Delete One Doc By Id
@@ -75,16 +72,15 @@ func CreateDocs(c *gin.Context) {
 // @Tags doc
 // @Router /docs/{id} [DELETE]
 // @Success 204 {string} string ""
-func DeleteDocById(c *gin.Context) {
-	id := c.Param("id")
+func DeleteDocById(c *fiber.Ctx) error {
+	id := c.Params("id")
 
 	conn := conn.ConnPool()
-	err := self.DeleteDocs(c.Request.Context(), conn, id)
+	err := self.DeleteDocs(c.Context(), conn, id)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	c.String(http.StatusNoContent, "")
+	return c.SendStatus(http.StatusNoContent)
 }
 
 // @Summary Batch Delete Docs By Ids
@@ -93,23 +89,19 @@ func DeleteDocById(c *gin.Context) {
 // @Tags doc
 // @Router /docs [DELETE]
 // @Success 204 {string} string ""
-func DeleteDocs(c *gin.Context) {
+func DeleteDocs(c *fiber.Ctx) error {
 	var ids []string
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
-	if err := jsoniter.Unmarshal(body, &ids); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+	body := c.Request().Body()
+
+	if err := json.Unmarshal(body, &ids); err != nil {
+		return c.SendString(err.Error())
 	}
 	conn := conn.ConnPool()
-	err = self.DeleteDocs(c.Request.Context(), conn, ids...)
+	err := self.DeleteDocs(c.Context(), conn, ids...)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
-	c.String(http.StatusNoContent, "")
+	return c.SendStatus(http.StatusNoContent)
 }
