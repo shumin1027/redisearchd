@@ -1,14 +1,15 @@
 package http
 
 import (
+	"net/http"
+	"strconv"
+	"strings"
+
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 // 分页最大数量限制
@@ -59,7 +60,6 @@ func SearchByGet(c *fiber.Ctx) error {
 	if len(plimit) > 0 {
 		limit, err = strconv.Atoi(plimit)
 		if err != nil {
-			c.Status(http.StatusBadRequest)
 			return c.Status(http.StatusBadRequest).SendString(err.Error())
 		}
 		if limit > PAGE_NUM_LIMIT_MAX {

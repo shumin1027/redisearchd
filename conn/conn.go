@@ -1,8 +1,9 @@
 package conn
 
 import (
-	"github.com/RediSearch/redisearch-go/redisearch"
 	"strings"
+
+	"github.com/RediSearch/redisearch-go/redisearch"
 )
 
 var addr string
@@ -43,6 +44,6 @@ func DummyClient() *redisearch.Client {
 	return Client("_redisearchd_")
 }
 
-func Close() {
-	pool.Close()
+func Close() error {
+	return pool.Close()
 }

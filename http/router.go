@@ -1,21 +1,20 @@
 package http
 
 import (
-	"context"
-	"fmt"
-	"github.com/arsmn/fiber-swagger/v2"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-	"gitlab.xtc.home/xtc/redisearchd/conn"
-	_ "gitlab.xtc.home/xtc/redisearchd/docs"
-	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"gitlab.xtc.home/xtc/redisearchd/conn"
+	_ "gitlab.xtc.home/xtc/redisearchd/docs"
+	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 )
 
 var app *fiber.App
@@ -28,17 +27,16 @@ type Router interface {
 func init() {
 	cfg := fiber.Config{
 		JSONEncoder: json.Marshal,
+		ReadTimeout: 10 * time.Second,
 	}
 
 	app = fiber.New(cfg)
+
 	Route(app)
 }
 
 // 注册路由
 func Route(a *fiber.App) *fiber.App {
-
-	// Recover Middleware
-	app.Use(recover.New())
 
 	// Recover Middleware
 	app.Use(recover.New())
@@ -117,28 +115,23 @@ func Start(addr string) {
 func graceful(app *fiber.App) {
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscanll.SIGTERM
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall. SIGKILL but can"t be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutdown Server ...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	log.Println("shutting down server ...")
 	if err := app.Shutdown(); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		log.Fatal("server shutdown:", err)
 	}
 
-	fmt.Println("Running cleanup tasks...")
-	// Your cleanup tasks go here
-	fmt.Println("Closeing redis conn...")
-	conn.Close()
-
-	select {
-	case <-ctx.Done():
-		log.Println("timeout of 5 seconds.")
+	log.Println("running cleanup tasks...")
+	// Your cleanup tasks go heremak
+	log.Println("closeing redis conn...")
+	if err := conn.Close(); err != nil {
+		log.Fatal("close redis conn:", err)
 	}
-	log.Println("Server exiting")
+
+	log.Println("server exited")
 }
