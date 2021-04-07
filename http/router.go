@@ -2,9 +2,12 @@ package http
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"fmt"
+	"github.com/arsmn/fiber-swagger/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"gitlab.xtc.home/xtc/redisearchd/conn"
 	_ "gitlab.xtc.home/xtc/redisearchd/docs"
 	"log"
 	"net/http"
@@ -14,8 +17,7 @@ import (
 	"time"
 )
 
-var server *http.Server
-var engine *gin.Engine
+var app *fiber.App
 var routers = make(map[string]Router)
 
 type Router interface {
@@ -23,47 +25,52 @@ type Router interface {
 }
 
 func init() {
-	gin.SetMode(gin.ReleaseMode)
-	engine = gin.Default()
-	Route(engine)
+	app = fiber.New()
+	Route(app)
 }
 
 // 注册路由
-func Route(e *gin.Engine) *gin.Engine {
-	// Duration Middleware
-	e.Use(func(c *gin.Context) {
-		start := time.Now()
-		c.Next()
-		end := time.Now()
-		duration := end.Sub(start)
-		c.Writer.Header().Add("X-Request-Duration", duration.String())
-	})
+func Route(a *fiber.App) *fiber.App {
+
+	app.Use(recover.New())
+
+	app.Use(logger.New(logger.Config{
+		Format:       "${time} ${locals:requestid} ${status} - ${latency} ${method} ${path}\n",
+		TimeFormat:   "2006/01/02 15:04:05",
+		TimeZone:     "Local",
+		TimeInterval: 500 * time.Millisecond,
+	}))
 
 	// swagger api docs url: /swagger/index.html
-	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	app.Get("/swagger/*", swagger.Handler) // default
 
 	// version
-	e.GET("/version", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	a.Get("/version", func(c *fiber.Ctx) error {
+		return c.Status(http.StatusOK).JSON(fiber.Map{
 			"name":    "redisearchd",
 			"version": "v1.0",
 		})
 	})
 
 	// ping
-	e.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+	a.Get("/ping", func(c *fiber.Ctx) error {
+		return c.Status(http.StatusOK).SendString("pong")
 	})
 
-	routers["index"] = NewIndexRouter(e.Group("/indexes"))
-	routers["search"] = NewSearchRouter(e.Group("/search"))
-	routers["doc"] = NewDocRouter(e.Group("/docs"))
+	// stack
+	a.Get("/stack", func(c *fiber.Ctx) error {
+		return c.Status(http.StatusOK).JSON(app.Stack())
+	})
+
+	routers["doc"] = NewDocRouter(a.Group("/docs"))
+	routers["index"] = NewIndexRouter(a.Group("/indexes"))
+	routers["search"] = NewSearchRouter(a.Group("/search"))
 
 	for _, v := range routers {
 		v.Route()
 	}
 
-	return e
+	return app
 }
 
 // RediSearchs API
@@ -75,21 +82,16 @@ func Route(e *gin.Engine) *gin.Engine {
 // @host localhost:8080
 // @BasePath /
 func Start(addr string) {
-	server = &http.Server{
-		Addr:    addr,
-		Handler: engine,
-	}
-	log.Printf("listen: %s\n", addr)
 	go func() {
 		// service connections
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := app.Listen(addr); err != nil {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-	graceful(server)
+	graceful(app)
 }
 
-func graceful(server *http.Server) {
+func graceful(app *fiber.App) {
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
 	quit := make(chan os.Signal)
@@ -102,10 +104,15 @@ func graceful(server *http.Server) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
+	if err := app.Shutdown(); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
-	// catching ctx.Done(). timeout of 5 seconds.
+
+	fmt.Println("Running cleanup tasks...")
+	// Your cleanup tasks go here
+	fmt.Println("Closeing redis conn...")
+	conn.Close()
+
 	select {
 	case <-ctx.Done():
 		log.Println("timeout of 5 seconds.")

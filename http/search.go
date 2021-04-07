@@ -1,12 +1,11 @@
 package http
 
 import (
+	"encoding/json"
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
+	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -16,16 +15,20 @@ import (
 const PAGE_NUM_LIMIT_MAX = 1_000_000
 
 type SearchRouter struct {
-	*gin.RouterGroup
+	*fiber.Group
 }
 
-func NewSearchRouter(r *gin.RouterGroup) *SearchRouter {
-	return &SearchRouter{r}
+func NewSearchRouter(r fiber.Router) *SearchRouter {
+	g, ok := r.(*fiber.Group)
+	if ok {
+		return &SearchRouter{g}
+	}
+	return nil
 }
 
 func (r *SearchRouter) Route() {
-	r.GET("/:index", SearchByGet)
-	r.POST("/:index", SearchByPost)
+	r.Get("/:index", SearchByGet)
+	r.Post("/:index", SearchByPost)
 }
 
 // @Summary Search in an index with GET
@@ -43,8 +46,8 @@ func (r *SearchRouter) Route() {
 // @Param sort_by query string false "If specified, the results are ordered by the value of this field. This applies to both text and numeric fields. e.g: `sort_by=name|asc`"
 // @Param language query string false "If set, we use a stemmer for the supplied language during search for query expansion"
 // @Success 200 {array} redisearch.Document
-func SearchByGet(c *gin.Context) {
-	index := c.Param("index")
+func SearchByGet(c *fiber.Ctx) error {
+	index := c.Params("index")
 	cli := conn.Client(index)
 
 	raw := c.Query("raw")
@@ -56,7 +59,8 @@ func SearchByGet(c *gin.Context) {
 	if len(plimit) > 0 {
 		limit, err = strconv.Atoi(plimit)
 		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
+			c.Status(http.StatusBadRequest)
+			return c.Status(http.StatusBadRequest).SendString(err.Error())
 		}
 		if limit > PAGE_NUM_LIMIT_MAX {
 			limit = PAGE_NUM_LIMIT_MAX
@@ -69,7 +73,7 @@ func SearchByGet(c *gin.Context) {
 	if len(poffset) > 0 {
 		offset, err = strconv.Atoi(c.Query("offset"))
 		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
+			return c.Status(http.StatusBadRequest).SendString(err.Error())
 		}
 	}
 
@@ -121,11 +125,11 @@ func SearchByGet(c *gin.Context) {
 		query.Language = c.Query("language")
 	}
 
-	docs, total, err := self.Search(c.Request.Context(), cli, query)
+	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		return c.SendString(err.Error())
 	}
-	c.JSON(http.StatusOK, gin.H{
+	return c.JSON(fiber.Map{
 		"docs":  docs,
 		"total": total,
 	})
@@ -138,24 +142,20 @@ func SearchByGet(c *gin.Context) {
 // @Router /search/{index} [POST]
 // @Param index path string true "index name"
 // @Success 200 {array} redisearch.Document
-func SearchByPost(c *gin.Context) {
-	index := c.Param("index")
+func SearchByPost(c *fiber.Ctx) error {
+	index := c.Params("index")
 	cli := conn.Client(index)
 	var query = new(redisearch.Query)
-	body, err := ioutil.ReadAll(c.Request.Body)
+	body := c.Request().Body()
+
+	if err := json.Unmarshal(body, query); err != nil {
+		return c.SendString(err.Error())
+	}
+	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	if err := jsoniter.Unmarshal(body, query); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-	docs, total, err := self.Search(c.Request.Context(), cli, query)
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-	}
-	c.JSON(http.StatusOK, gin.H{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"docs":  docs,
 		"total": total,
 	})
