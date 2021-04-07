@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
 	jsoniter "github.com/json-iterator/go"
+
 	"testing"
 )
 
@@ -18,8 +19,6 @@ func TestJSON(t *testing.T) {
 }
 
 func print() {
-
-	jsoniter.RegisterExtension(NewJSONStyleExtension(true, KebabCase))
 
 	snakeCaseJSON := jsoniter.Config{TagKey: "snake"}.Froze()
 	camelCaseJSON := jsoniter.Config{TagKey: "camel"}.Froze()
@@ -63,7 +62,7 @@ var data = `
 }
 `
 
-func TestUn(t *testing.T) {
+func TestUnmarshal(t *testing.T) {
 	var query = new(redisearch.Query)
 	bytes := []byte(data)
 	jsoniter.Unmarshal(bytes, query)

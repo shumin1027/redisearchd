@@ -10,7 +10,7 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/gofiber/fiber/v2 v2.7.1
 	github.com/gomodule/redigo v2.0.0+incompatible
-	github.com/iancoleman/strcase v0.1.2
+	github.com/iancoleman/strcase v0.1.3
 	github.com/json-iterator/go v1.1.10
 	github.com/klauspost/compress v1.11.13 // indirect
 	github.com/magiconair/properties v1.8.4 // indirect

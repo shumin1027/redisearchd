@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	_ "gitlab.xtc.home/xtc/redisearchd/docs"
+	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	"log"
 	"net/http"
 	"os"
@@ -25,7 +26,11 @@ type Router interface {
 }
 
 func init() {
-	app = fiber.New()
+	cfg := fiber.Config{
+		JSONEncoder: json.Marshal,
+	}
+
+	app = fiber.New(cfg)
 	Route(app)
 }
 

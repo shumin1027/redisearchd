@@ -1,10 +1,10 @@
 package http
 
 import (
-	"encoding/json"
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
+	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 	"net/http"
 	"strconv"
