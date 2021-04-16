@@ -9,8 +9,8 @@ package json
 
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/iancoleman/strcase"
+	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strings"
 	"unicode"

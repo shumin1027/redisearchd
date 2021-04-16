@@ -2,14 +2,17 @@ package cmd
 
 import (
 	"bufio"
-	"github.com/coreos/go-systemd/v22/unit"
-	"github.com/spf13/cobra"
-	"gitlab.xtc.home/xtc/redisearchd/app"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
+	"context"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/coreos/go-systemd/v22/dbus"
+	"github.com/coreos/go-systemd/v22/unit"
+	"github.com/spf13/cobra"
+	"gitlab.xtc.home/xtc/redisearchd/app"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
 )
 
 // installCmd represents the install command
@@ -18,11 +21,15 @@ var installCmd = &cobra.Command{
 	Short: "Install as a systemd unit",
 	Long:  `Install as a systemd unit`,
 	Run: func(cmd *cobra.Command, args []string) {
-		path := cmd.PersistentFlags().Lookup("path").Value.String()
+		path := cmd.PersistentFlags().Lookup("bin-path").Value.String()
+		unitFilePath := cmd.PersistentFlags().Lookup("unitfile-path").Value.String()
+
 		binfile := filepath.Join(path, app.Name)
 		log.Println("executable bin file:", binfile)
-		unitfile := cmd.PersistentFlags().Lookup("unitfile").Value.String()
+
+		unitfile := filepath.Join(unitFilePath, app.Name+".service")
 		log.Println("systemd unit file:", unitfile)
+
 		install(binfile, unitfile)
 	},
 }
@@ -30,8 +37,8 @@ var installCmd = &cobra.Command{
 func init() {
 	self := installCmd
 	rootCmd.AddCommand(self)
-	self.PersistentFlags().StringP("path", "", "/usr/local/bin/", "default bin path")
-	self.PersistentFlags().StringP("unitfile", "", "/usr/lib/systemd/system/redisearchd.service", "default systemd unit file")
+	self.PersistentFlags().StringP("bin-path", "b", "/usr/local/bin/", "default bin path")
+	self.PersistentFlags().StringP("unitfile-path", "u", "/usr/lib/systemd/system/", "default systemd unit file path")
 }
 
 const unittext = `
@@ -52,15 +59,29 @@ WantedBy=multi-user.target
 
 func install(binfile, unitfile string) {
 
+	if exists, _ := utils.PathExists(unitfile); exists {
+		err := os.Remove(unitfile)
+		if err != nil {
+			log.Panic(err)
+		}
+	}
+
+	if exists, _ := utils.PathExists(binfile); exists {
+		err := os.Remove(binfile)
+		if err != nil {
+			log.Panic(err)
+		}
+	}
+
 	self, err := os.Executable()
 	if err != nil {
 		log.Panic(err)
 	}
-	_, err = utils.CopyFile(self, binfile, 751)
-
+	_, err = utils.CopyFile(self, binfile, 0751)
 	if err != nil {
 		log.Panic(err)
 	}
+
 	reader := strings.NewReader(unittext)
 	opts, err := unit.Deserialize(reader)
 	if err != nil {
@@ -71,14 +92,14 @@ func install(binfile, unitfile string) {
 	r := unit.Serialize(opts)
 
 	var f *os.File
-	exist, err := utils.PathExists(unitfile)
+	exist, _ := utils.PathExists(unitfile)
 	if exist {
 		f, err = os.OpenFile(unitfile, os.O_APPEND, 0666)
 		if err != nil {
 			log.Panic(err)
 		}
 	} else {
-		f, err = utils.MakeFile(unitfile)
+		f, _ = utils.MakeFile(unitfile)
 	}
 	defer func(f *os.File) {
 		err := f.Close()
@@ -97,4 +118,15 @@ func install(binfile, unitfile string) {
 			log.Panic(err)
 		}
 	}(w)
+
+	ctx := context.TODO()
+	systemd, err := dbus.NewWithContext(ctx)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer systemd.Close()
+	err = systemd.ReloadContext(ctx)
+	if err != nil {
+		log.Panic(err)
+	}
 }

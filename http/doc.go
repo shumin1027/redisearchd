@@ -1,12 +1,13 @@
 package http
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	"gitlab.xtc.home/xtc/redisearchd/internal/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
-	"net/http"
-	"strings"
 )
 
 type DocRouter struct {
