@@ -2,11 +2,12 @@ package redisearch
 
 import (
 	"errors"
-	"github.com/gomodule/redigo/redis"
 	"log"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/gomodule/redigo/redis"
 )
 
 // Client is an interface to redisearch's redis commands
@@ -89,7 +90,6 @@ func (i *Client) AddField(f Field) error {
 }
 
 // Index indexes a list of documents with the default options
-// Deprecated: This command is deprecated and act as simpe redis HSET, the document created will be indexed only if it matches one or some indexes definitions (as defined on ft.create ), Use HSET instead.
 func (i *Client) Index(docs ...Document) error {
 	return i.IndexOptions(DefaultIndexingOptions, docs...)
 }
@@ -282,7 +282,6 @@ func (i *Client) Aggregate(q *AggregateQuery) (aggregateReply [][]string, total 
 }
 
 // Get - Returns the full contents of a document
-// Deprecated: This function  is not longer supported on RediSearch 2.0 and above, Use HGETALL instead.
 func (i *Client) Get(docId string) (doc *Document, err error) {
 	doc = nil
 	conn := i.pool.Get()
@@ -308,7 +307,6 @@ func (i *Client) Get(docId string) (doc *Document, err error) {
 // MultiGet - Returns the full contents of multiple documents.
 // Returns an array with exactly the same number of elements as the number of keys sent to the command.
 // Each element in it is either an Document or nil if it was not found.
-// Deprecated: This function  is not longer supported on RediSearch 2.0 and above, Use HGETALL instead.
 func (i *Client) MultiGet(documentIds []string) (docs []*Document, err error) {
 	docs = make([]*Document, len(documentIds))
 	conn := i.pool.Get()
@@ -357,13 +355,13 @@ func (i *Client) Explain(q *Query) (string, error) {
 }
 
 //  Deletes the index and all the keys associated with it.
-//  Deprecated: This function  is not longer supported on RediSearch 2.0 and above, use DropIndex() and DropIndexByKeepdocs() instead.
 func (i *Client) Drop() error {
 	conn := i.pool.Get()
 	defer conn.Close()
 
 	_, err := conn.Do("FT.DROP", i.name)
 	return err
+
 }
 
 // Deletes the secondary index and optionally the associated hashes
@@ -527,27 +525,6 @@ func (info *IndexInfo) loadSchema(values []interface{}, options []string) {
 	info.Schema = *sc
 }
 
-// Returns a list of all existing indexes.
-func (i *Client) List() ([]string, error) {
-	conn := i.pool.Get()
-	defer conn.Close()
-
-	res, err := redis.Values(conn.Do("FT._LIST"))
-	if err != nil {
-		return nil, err
-	}
-
-	var indexes []string
-
-	// Iterate over the values
-	for ii := 0; ii < len(res); ii += 1 {
-		key, _ := redis.String(res[ii], nil)
-		indexes = append(indexes, key)
-	}
-
-	return indexes, nil
-}
-
 // Info - Get information about the index. This can also be used to check if the
 // index exists
 func (i *Client) Info() (*IndexInfo, error) {
@@ -688,4 +665,25 @@ func (i *Client) AddHash(docId string, score float32, language string, replace b
 		args = args.Add("REPLACE")
 	}
 	return redis.String(conn.Do("FT.ADDHASH", args...))
+}
+
+// Returns a list of all existing indexes.
+func (i *Client) List() ([]string, error) {
+	conn := i.pool.Get()
+	defer conn.Close()
+
+	res, err := redis.Values(conn.Do("FT._LIST"))
+	if err != nil {
+		return nil, err
+	}
+
+	var indexes []string
+
+	// Iterate over the values
+	for ii := 0; ii < len(res); ii += 1 {
+		key, _ := redis.String(res[ii], nil)
+		indexes = append(indexes, key)
+	}
+
+	return indexes, nil
 }

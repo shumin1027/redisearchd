@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	self "gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	_ "gitlab.xtc.home/xtc/redisearchd/docs"
 	"gitlab.xtc.home/xtc/redisearchd/internal/json"
@@ -26,6 +27,7 @@ type Router interface {
 
 func init() {
 	cfg := fiber.Config{
+		Prefork:     true,
 		JSONEncoder: json.Marshal,
 		ReadTimeout: 10 * time.Second,
 	}
@@ -68,8 +70,8 @@ func Route(a *fiber.App) *fiber.App {
 	// version
 	a.Get("/version", func(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).JSON(fiber.Map{
-			"name":    "redisearchd",
-			"version": "v1.0",
+			"name":    self.Name,
+			"version": self.Version,
 		})
 	})
 

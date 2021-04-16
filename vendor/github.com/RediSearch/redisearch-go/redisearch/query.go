@@ -352,7 +352,6 @@ func (q *Query) SummarizeOptions(opts SummaryOptions) *Query {
 }
 
 // IndexOptions indexes multiple documents on the index, with optional Options passed to options
-// Deprecated: This command is deprecated and act as simpe redis HSET, the document created will be indexed only if it matches one or some indexes definitions (as defined on ft.create ), Use HSET instead.
 func (i *Client) IndexOptions(opts IndexingOptions, docs ...Document) error {
 
 	conn := i.pool.Get()
