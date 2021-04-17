@@ -28,9 +28,9 @@ import (
 var cfgFile string
 
 var startCmd = &cobra.Command{
-	Use:   "redisearchd",
-	Short: "RediSearch API",
-	Long:  `RediSearch API`,
+	Use:   "start",
+	Short: "Start RediSearch Restful API",
+	Long:  `Start RediSearch Restful API`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
@@ -50,15 +50,16 @@ var startCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	self := startCmd
+	rootCmd.AddCommand(startCmd)
 
-	self.PersistentFlags().IntP("web.port", "", 8080, "web listening port")
-	viper.BindPFlag("web.port", rootCmd.PersistentFlags().Lookup("web.port"))
+	flags := startCmd.PersistentFlags()
+	flags.StringVarP(&cfgFile, "config", "c", "redisearchd.yaml", "config file")
 
-	self.PersistentFlags().StringP("redis.addr", "", "127.0.0.1:6379", "redis server addr")
-	viper.BindPFlag("redis.addr", rootCmd.PersistentFlags().Lookup("redis.addr"))
+	flags.IntP("web.port", "", 16379, "web listening port")
+	viper.BindPFlag("web.port", flags.Lookup("web.port"))
 
-	self.PersistentFlags().StringVarP(&cfgFile, "config", "c", "redisearchd.yaml", "config file")
+	flags.StringP("redis.addr", "", "127.0.0.1:6379", "redis server addr")
+	viper.BindPFlag("redis.addr", flags.Lookup("redis.addr"))
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -1,125 +1,25 @@
 definitions:
-  redisearch.Document:
+  http.HttpError:
     properties:
-      id:
+      code:
+        type: integer
+      message:
         type: string
-      payload:
-        items:
-          type: integer
-        type: array
-      properties:
-        additionalProperties: true
-        type: object
-      score:
-        type: number
     type: object
-  redisearch.Field:
+  http.Response:
     properties:
-      name:
-        type: string
-      options:
+      error:
+        $ref: '#/definitions/http.HttpError'
+        description: 调用失败时，返回的出错信息
+      inventory:
+        description: 调用成功时，返回的数据清单
         type: object
-      sortable:
+      success:
+        description: 是否调用成功：true表示调用成功，false表示调用失败
         type: boolean
-      type:
-        type: integer
-    type: object
-  redisearch.IndexInfo:
-    properties:
-      bytesPerRecordAvg:
-        type: number
-      docCount:
-        type: integer
-      docTableSizeMB:
-        type: number
-      invertedIndexSizeMB:
-        type: number
-      isIndexing:
-        type: boolean
-      keyTableSizeMB:
-        type: number
-      maxDocID:
-        type: integer
-      name:
-        type: string
-      offsetBitsPerTermAvg:
-        type: number
-      offsetVectorSizeMB:
-        type: number
-      offsetsPerTermAvg:
-        type: number
-      percentIndexed:
-        type: number
-      recordCount:
-        type: integer
-      recordsPerDocAvg:
-        type: number
-      schema:
-        $ref: '#/definitions/redisearch.Schema'
-        type: object
-      termCount:
-        type: integer
-    type: object
-  redisearch.Options:
-    properties:
-      maxTextFieldsFlag:
-        description: |-
-          For efficiency, RediSearch encodes indexes differently if they are created with less than 32 text fields.
-          If set to true This option forces RediSearch to encode indexes as if there were more than 32 text fields,
-          which allows you to add additional fields (beyond 32).
-        type: boolean
-      noFieldFlags:
-        description: |-
-          If set, we avoid saving field bits for each term.
-          This saves memory, but does not allow filtering by specific fields.
-          This is an option that is applied and index level.
-        type: boolean
-      noFrequencies:
-        description: |-
-          If set, we avoid saving the term frequencies in the index.
-          This saves memory but does not allow sorting based on the frequencies of a given term within the document.
-          This is an option that is applied and index level.
-        type: boolean
-      noOffsetVectors:
-        description: |-
-          If set, , we avoid saving the term offsets for documents.
-          This saves memory but does not allow exact searches or highlighting. Implies NOHL
-          This is an option that is applied and index level.
-        type: boolean
-      noSave:
-        description: If set, we will not save the documents contents, just index them, for fetching ids only.
-        type: boolean
-      stopwords:
-        description: |-
-          Set the index with a custom stop-words list, to be ignored during indexing and search time
-          This is an option that is applied and index level.
-          If the list is nil the default stop-words list is used.
-          See https://oss.redislabs.com/redisearch/Stopwords.html#default_stop-word_list
-        items:
-          type: string
-        type: array
-      temporary:
-        description: |-
-          If set to true, creates a lightweight temporary index which will expire after the specified period of inactivity.
-          The internal idle timer is reset whenever the index is searched or added to.
-          Because such indexes are lightweight, you can create thousands of such indexes without negative performance implications.
-        type: boolean
-      temporaryPeriod:
-        type: integer
-    type: object
-  redisearch.Schema:
-    properties:
-      fields:
-        items:
-          $ref: '#/definitions/redisearch.Field'
-        type: array
-      options:
-        $ref: '#/definitions/redisearch.Options'
-        type: object
     type: object
 info:
   contact: {}
-  license: {}
 paths:
   /docs:
     delete:
@@ -127,8 +27,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
       summary: Batch Delete Docs By Ids
@@ -152,8 +52,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
       summary: Delete One Doc By Id
@@ -173,7 +73,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/redisearch.Document'
+            $ref: '#/definitions/http.Response'
       summary: Get Doc By Id
       tags:
       - doc
@@ -208,10 +108,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            type: string
+        "204":
+          description: ""
       summary: Delete an index
       tags:
       - index
@@ -229,7 +127,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/redisearch.IndexInfo'
+            $ref: '#/definitions/http.Response'
       summary: Get Index Info
       tags:
       - index
@@ -244,16 +142,15 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            type: string
+        "201":
+          description: ""
       summary: Create an index
       tags:
       - index
-  /search/{index}:
+  /indexes/{index}/search:
     get:
-      description: Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
+      description: Searches the index with a textual query, returning either documents
+        or just count(when num=0 and offset=0).
       parameters:
       - description: index name
         in: path
@@ -266,41 +163,51 @@ paths:
         required: true
         type: string
       - default: 10
-        description: maximum number of documents returned. default is `10`;max is `1_000_000`. when num is `0`, just return the count
+        description: maximum number of documents returned. default is `10`;max is
+          `1_000_000`. when num is `0`, just return the count
         in: query
+        maximum: 1000000
+        minimum: 0
         name: limit
         type: integer
       - default: 0
         description: number of documents to skip，default is `0`
         in: query
+        minimum: 0
         name: offset
         type: integer
       - collectionFormat: csv
-        description: 'If set, we limit the result to a given set of keys specified in the list. '
+        description: 'If set, we limit the result to a given set of keys specified
+          in the list. '
         in: query
         items:
           type: string
         name: in_keys
         type: array
       - collectionFormat: csv
-        description: ' If set, filter the results to ones appearing only in specific fields of the document, like title or URL. num is the number of specified field arguments '
+        description: ' If set, filter the results to ones appearing only in specific
+          fields of the document, like title or URL. num is the number of specified
+          field arguments '
         in: query
         items:
           type: string
         name: in_fields
         type: array
       - collectionFormat: csv
-        description: 'Use this keyword to limit which fields from the document are returned.e.g: `return_fields=id,name,age` '
+        description: 'Use this keyword to limit which fields from the document are
+          returned.e.g: `return_fields=id,name,age` '
         in: query
         items:
           type: string
         name: return_fields
         type: array
-      - description: 'If specified, the results are ordered by the value of this field. This applies to both text and numeric fields. e.g: `sort_by=name|asc`'
+      - description: 'If specified, the results are ordered by the value of this field.
+          This applies to both text and numeric fields. e.g: `sort_by=name|asc`'
         in: query
         name: sort_by
         type: string
-      - description: If set, we use a stemmer for the supplied language during search for query expansion
+      - description: If set, we use a stemmer for the supplied language during search
+          for query expansion
         in: query
         name: language
         type: string
@@ -311,13 +218,14 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/redisearch.Document'
+              $ref: '#/definitions/http.Response'
             type: array
       summary: Search in an index with GET
       tags:
       - search
     post:
-      description: Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
+      description: Searches the index with a textual query, returning either documents
+        or just count(when num=0 and offset=0).
       parameters:
       - description: index name
         in: path
@@ -331,7 +239,104 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/redisearch.Document'
+              $ref: '#/definitions/http.Response'
+            type: array
+      summary: Search in an index with POST
+      tags:
+      - search
+  /search/{index}:
+    get:
+      description: Searches the index with a textual query, returning either documents
+        or just count(when num=0 and offset=0).
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      - description: ' the text query to search'
+        in: query
+        name: raw
+        required: true
+        type: string
+      - default: 10
+        description: maximum number of documents returned. default is `10`;max is
+          `1_000_000`. when num is `0`, just return the count
+        in: query
+        maximum: 1000000
+        minimum: 0
+        name: limit
+        type: integer
+      - default: 0
+        description: number of documents to skip，default is `0`
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      - collectionFormat: csv
+        description: 'If set, we limit the result to a given set of keys specified
+          in the list. '
+        in: query
+        items:
+          type: string
+        name: in_keys
+        type: array
+      - collectionFormat: csv
+        description: ' If set, filter the results to ones appearing only in specific
+          fields of the document, like title or URL. num is the number of specified
+          field arguments '
+        in: query
+        items:
+          type: string
+        name: in_fields
+        type: array
+      - collectionFormat: csv
+        description: 'Use this keyword to limit which fields from the document are
+          returned.e.g: `return_fields=id,name,age` '
+        in: query
+        items:
+          type: string
+        name: return_fields
+        type: array
+      - description: 'If specified, the results are ordered by the value of this field.
+          This applies to both text and numeric fields. e.g: `sort_by=name|asc`'
+        in: query
+        name: sort_by
+        type: string
+      - description: If set, we use a stemmer for the supplied language during search
+          for query expansion
+        in: query
+        name: language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.Response'
+            type: array
+      summary: Search in an index with GET
+      tags:
+      - search
+    post:
+      description: Searches the index with a textual query, returning either documents
+        or just count(when num=0 and offset=0).
+      parameters:
+      - description: index name
+        in: path
+        name: index
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.Response'
             type: array
       summary: Search in an index with POST
       tags:

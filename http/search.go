@@ -1,14 +1,14 @@
 package http
 
 import (
-	"net/http"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strconv"
 	"strings"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
-	"gitlab.xtc.home/xtc/redisearchd/internal/json"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
@@ -46,7 +46,7 @@ func (r *SearchRouter) Route() {
 // @Param return_fields query []string false "Use this keyword to limit which fields from the document are returned.e.g: `return_fields=id,name,age` " collectionFormat(csv)
 // @Param sort_by query string false "If specified, the results are ordered by the value of this field. This applies to both text and numeric fields. e.g: `sort_by=name|asc`"
 // @Param language query string false "If set, we use a stemmer for the supplied language during search for query expansion"
-// @Success 200 {array} redisearch.Document
+// @Success 200 {array} http.Response
 func SearchByGet(c *fiber.Ctx) error {
 	index := c.Params("index")
 	cli := conn.Client(index)
@@ -60,7 +60,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	if len(plimit) > 0 {
 		limit, err = strconv.Atoi(plimit)
 		if err != nil {
-			return c.Status(http.StatusBadRequest).SendString(err.Error())
+			return http.Error(c, err)
 		}
 		if limit > PAGE_NUM_LIMIT_MAX {
 			limit = PAGE_NUM_LIMIT_MAX
@@ -73,7 +73,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	if len(poffset) > 0 {
 		offset, err = strconv.Atoi(c.Query("offset"))
 		if err != nil {
-			return c.Status(http.StatusBadRequest).SendString(err.Error())
+			return http.Error(c, err)
 		}
 	}
 
@@ -129,7 +129,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	if err != nil {
 		return c.SendString(err.Error())
 	}
-	return c.JSON(fiber.Map{
+	return http.Success(c, fiber.Map{
 		"docs":  docs,
 		"total": total,
 	})
@@ -141,7 +141,7 @@ func SearchByGet(c *fiber.Ctx) error {
 // @Tags search
 // @Router /search/{index} [POST]
 // @Param index path string true "index name"
-// @Success 200 {array} redisearch.Document
+// @Success 200 {array} http.Response
 func SearchByPost(c *fiber.Ctx) error {
 	index := c.Params("index")
 	cli := conn.Client(index)
@@ -149,13 +149,13 @@ func SearchByPost(c *fiber.Ctx) error {
 	body := c.Request().Body()
 
 	if err := json.Unmarshal(body, query); err != nil {
-		return c.SendString(err.Error())
+		return http.Error(c, err)
 	}
 	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString(err.Error())
+		return http.Error(c, err)
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{
+	return http.Success(c, fiber.Map{
 		"docs":  docs,
 		"total": total,
 	})

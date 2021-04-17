@@ -15,7 +15,7 @@ import (
 	self "gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/conn"
 	_ "gitlab.xtc.home/xtc/redisearchd/docs"
-	"gitlab.xtc.home/xtc/redisearchd/internal/json"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 )
 
 var app *fiber.App

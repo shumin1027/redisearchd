@@ -1,6 +1,6 @@
 module gitlab.xtc.home/xtc/redisearchd
 
-go 1.15
+go 1.16
 
 require (
 	github.com/RediSearch/redisearch-go v1.1.0
@@ -25,9 +25,11 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/swaggo/swag v1.7.0
 	github.com/valyala/fasthttp v1.23.0 // indirect
+	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d // indirect
 	golang.org/x/sys v0.0.0-20210415045647-66c3f260301c // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 replace github.com/RediSearch/redisearch-go => ./libs/redisearch-go

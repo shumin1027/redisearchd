@@ -2,7 +2,6 @@ package json
 
 import (
 	"fmt"
-	"github.com/RediSearch/redisearch-go/redisearch"
 	jsoniter "github.com/json-iterator/go"
 
 	"testing"
@@ -37,34 +36,4 @@ func print() {
 
 	result, _ = camelCaseJSON.Marshal(p)
 	fmt.Println(string(result))
-}
-
-var data = `
-{
-    "Raw": "*",
-    "Paging": {
-        "Offset": 0,
-        "Num": 10
-    },
-    "Flags": 0,
-    "Slop": 0,
-    "Filters": null,
-    "InKeys": null,
-    "InFields": null,
-    "ReturnFields": null,
-    "Language": "",
-    "Expander": "",
-    "Scorer": "",
-    "Payload": null,
-    "SortBy": null,
-    "HighlightOpts": null,
-    "SummarizeOpts": null
-}
-`
-
-func TestUnmarshal(t *testing.T) {
-	var query = new(redisearch.Query)
-	bytes := []byte(data)
-	jsoniter.Unmarshal(bytes, query)
-	println(query.Raw)
 }

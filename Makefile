@@ -3,7 +3,7 @@ PREFIX = $(shell pwd)
 BUILDDIR = $(shell pwd)/bin
 
 .PHONY: build
-build:clean fmt vet
+build:clean fmt vet doc
 	@echo ">> building code"
 	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
 

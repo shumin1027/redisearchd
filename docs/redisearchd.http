@@ -1,4 +1,4 @@
-@server=http://127.0.0.1:8080
+@server=http://127.0.0.1:16379
 
 ### 创建索引
 ### schema.fields.type: 0-Text;1-Numeric;2-Geo;3-Tag

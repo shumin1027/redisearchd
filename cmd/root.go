@@ -28,6 +28,9 @@ var rootCmd = &cobra.Command{
 	Use:     app.Name,
 	Short:   "RediSearch Restful API",
 	Long:    `RediSearch Restful API`,
+	PreRun: func(cmd *cobra.Command, args []string) {
+		startCmd.PreRun(cmd, args)
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		startCmd.Run(cmd, args)
 	},

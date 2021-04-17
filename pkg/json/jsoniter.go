@@ -82,8 +82,6 @@ func init() {
 		}
 	})
 
-	//jsoniter.RegisterTypeEncoder("map[string]interface {}", &MapNamingStrategyEncoder{SnakeCase})
-	//jsoniter.RegisterTypeEncoder("map[string]string", &MapNamingStrategyEncoder{SnakeCase})
 }
 
 /*
@@ -167,46 +165,4 @@ func (extension *JSONStyleExtension) translate(str string) string {
 		}
 	}
 	return str
-}
-
-type MapNamingStrategyEncoder struct {
-	NamingStrategy NamingStrategy
-}
-
-func (codec *MapNamingStrategyEncoder) IsEmpty(ptr unsafe.Pointer) bool {
-	return len(*((*map[string]interface{})(ptr))) == 0
-}
-
-func (codec *MapNamingStrategyEncoder) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
-	namingStrategy := codec.NamingStrategy
-	m := *((*map[string]interface{})(ptr))
-	for k, v := range m {
-		switch namingStrategy {
-		case PascalCase:
-			{
-				k = strcase.ToCamel(k)
-				stream.WriteObjectField(k)
-				stream.WriteVal(v)
-			}
-
-		case CamelCase:
-			{
-				k = strcase.ToLowerCamel(k)
-				stream.WriteObjectField(k)
-				stream.WriteVal(v)
-			}
-		case SnakeCase:
-			{
-				k = strcase.ToSnake(k)
-				stream.WriteObjectField(k)
-				stream.WriteVal(v)
-			}
-		case KebabCase:
-			{
-				k = strcase.ToKebab(k)
-				stream.WriteObjectField(k)
-				stream.WriteVal(v)
-			}
-		}
-	}
 }

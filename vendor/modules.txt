@@ -134,6 +134,18 @@ github.com/valyala/fasthttp/reuseport
 github.com/valyala/fasthttp/stackless
 # github.com/valyala/tcplisten v1.0.0
 github.com/valyala/tcplisten
+# go.uber.org/atomic v1.6.0
+go.uber.org/atomic
+# go.uber.org/multierr v1.5.0
+go.uber.org/multierr
+# go.uber.org/zap v1.16.0
+## explicit
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
 # golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d
 ## explicit
 golang.org/x/net/idna
@@ -159,6 +171,9 @@ golang.org/x/tools/go/loader
 # gopkg.in/ini.v1 v1.62.0
 ## explicit
 gopkg.in/ini.v1
+# gopkg.in/natefinch/lumberjack.v2 v2.0.0
+## explicit
+gopkg.in/natefinch/lumberjack.v2
 # gopkg.in/yaml.v2 v2.4.0
 gopkg.in/yaml.v2
 # github.com/RediSearch/redisearch-go => ./libs/redisearch-go

@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-func PathExists(path string) (bool, error) {
+// 判断所给路径文件/文件夹是否存在
+func Exists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -17,6 +18,22 @@ func PathExists(path string) (bool, error) {
 	return false, err
 }
 
+// 判断所给路径是否为文件夹
+func IsDir(path string) (bool, error) {
+	s, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+	return s.IsDir(), nil
+}
+
+// 判断所给路径是否为文件
+func IsFile(path string) (bool, error) {
+	isdir, err := IsDir(path)
+	return !isdir, err
+}
+
+// 创建文件夹
 func MakeDir(path string, perm ...os.FileMode) error {
 	if len(perm) == 0 {
 		return os.MkdirAll(path, os.ModePerm)
@@ -25,11 +42,12 @@ func MakeDir(path string, perm ...os.FileMode) error {
 	}
 }
 
+// 创建文件
 func MakeFile(path string) (*os.File, error) {
 	i := strings.LastIndex(path, "/")
 	if i > 0 {
 		subdir := path[0 : i+1]
-		exists, _ := PathExists(subdir)
+		exists, _ := Exists(subdir)
 		if !exists {
 			_ = MakeDir(subdir)
 		}

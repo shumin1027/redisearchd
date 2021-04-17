@@ -35,10 +35,10 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	self := installCmd
-	rootCmd.AddCommand(self)
-	self.PersistentFlags().StringP("bin-path", "b", "/usr/local/bin/", "default bin path")
-	self.PersistentFlags().StringP("unitfile-path", "u", "/usr/lib/systemd/system/", "default systemd unit file path")
+	rootCmd.AddCommand(installCmd)
+	flags := startCmd.PersistentFlags()
+	flags.StringP("bin-path", "b", "/usr/local/bin/", "default bin path")
+	flags.StringP("unitfile-path", "u", "/usr/lib/systemd/system/", "default systemd unit file path")
 }
 
 const unittext = `
@@ -59,14 +59,14 @@ WantedBy=multi-user.target
 
 func install(binfile, unitfile string) {
 
-	if exists, _ := utils.PathExists(unitfile); exists {
+	if exists, _ := utils.Exists(unitfile); exists {
 		err := os.Remove(unitfile)
 		if err != nil {
 			log.Panic(err)
 		}
 	}
 
-	if exists, _ := utils.PathExists(binfile); exists {
+	if exists, _ := utils.Exists(binfile); exists {
 		err := os.Remove(binfile)
 		if err != nil {
 			log.Panic(err)
@@ -92,7 +92,7 @@ func install(binfile, unitfile string) {
 	r := unit.Serialize(opts)
 
 	var f *os.File
-	exist, _ := utils.PathExists(unitfile)
+	exist, _ := utils.Exists(unitfile)
 	if exist {
 		f, err = os.OpenFile(unitfile, os.O_APPEND, 0666)
 		if err != nil {
