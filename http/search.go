@@ -1,13 +1,13 @@
 package http
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strconv"
 	"strings"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gofiber/fiber/v2"
-	"gitlab.xtc.home/xtc/redisearchd/conn"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
@@ -49,7 +49,7 @@ func (r *SearchRouter) Route() {
 // @Success 200 {array} http.Response
 func SearchByGet(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 
 	raw := c.Query("raw")
 
@@ -144,7 +144,7 @@ func SearchByGet(c *fiber.Ctx) error {
 // @Success 200 {array} http.Response
 func SearchByPost(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 	var query = new(redisearch.Query)
 	body := c.Request().Body()
 

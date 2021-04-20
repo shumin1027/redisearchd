@@ -1,6 +1,7 @@
 package http
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strconv"
 	"strings"
@@ -9,7 +10,6 @@ import (
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"gitlab.xtc.home/xtc/redisearchd/conn"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
@@ -42,7 +42,7 @@ func (r *IndexRouter) Route() {
 // @Router /indexes [GET]
 // @Success 200 {array} string
 func List(c *fiber.Ctx) error {
-	cli := conn.DummyClient()
+	cli := redis.DummyClient()
 	indexes, err := self.ListIndexes(c.Context(), cli)
 	if err != nil {
 		return http.Error(c, err)
@@ -59,7 +59,7 @@ func List(c *fiber.Ctx) error {
 // @Success 200 {object} http.Response
 func Info(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 	info, err := self.Info(c.Context(), cli)
 	if err != nil {
 		return http.Error(c, err)
@@ -81,7 +81,7 @@ func DropIndex(c *fiber.Ctx) error {
 	if len(c.Query("deldocs")) > 0 && strings.ToLower(c.Query("deldocs")) == "true" {
 		deldocs = true
 	}
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 	err := self.DropIndex(c.Context(), cli, deldocs)
 	if err != nil {
 		return http.Error(c, err)
@@ -108,7 +108,7 @@ func CreateIndex(c *fiber.Ctx) error {
 		return http.Error(c, err)
 	}
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 	if err := self.CreateIndex(c.Context(), cli, req.Schema, req.IndexDefinition); err != nil {
 		return http.Error(c, err)
 	}
@@ -132,7 +132,7 @@ func CreateIndex(c *fiber.Ctx) error {
 // @Success 200 {array} http.Response
 func SearchIndexByGet(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 
 	raw := c.Query("raw")
 
@@ -227,7 +227,7 @@ func SearchIndexByGet(c *fiber.Ctx) error {
 // @Success 200 {array} http.Response
 func SearchIndexByPost(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := conn.Client(index)
+	cli := redis.Client(index)
 	var query = new(redisearch.Query)
 	body := c.Request().Body()
 

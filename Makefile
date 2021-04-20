@@ -2,10 +2,18 @@ PKGS = $$(go list ./... | grep -v /vendor/)
 PREFIX = $(shell pwd)
 BUILDDIR = $(shell pwd)/bin
 
+GIT_SHA=$(shell git rev-parse HEAD)
+GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+GIT_CLOSEST_TAG=$(shell git describe --abbrev=0 --tags)
+DATE=$(shell date --iso-8601=seconds)
+
+BUILD_INFO_IMPORT_PATH=gitlab.xtc.home/xtc/redisearchd/app
+BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPORT_PATH).GitCommit=$(GIT_SHA) -X $(BUILD_INFO_IMPORT_PATH).GitBranch=$(GIT_BRANCH) -X $(BUILD_INFO_IMPORT_PATH).GitTag=$(GIT_CLOSEST_TAG)'
+
 .PHONY: build
 build:clean fmt vet doc
 	@echo ">> building code"
-	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
+	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
 	strip $(BUILDDIR)/redisearchd
 
 .PHONY: fmt

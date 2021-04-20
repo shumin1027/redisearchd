@@ -20,7 +20,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gitlab.xtc.home/xtc/redisearchd/conn"
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
 	"os"
 )
@@ -35,7 +35,7 @@ var startCmd = &cobra.Command{
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
 		raw := viper.GetString("redis.addr")
-		conn.Init(raw)
+		redis.Init(raw)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		port := viper.GetInt("web.port")

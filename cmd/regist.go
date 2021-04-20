@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gitlab.xtc.home/xtc/redisearchd/app/utility"
-	"gitlab.xtc.home/xtc/redisearchd/consul"
+	consul2 "gitlab.xtc.home/xtc/redisearchd/conn/consul"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
 	"strings"
 )
@@ -24,7 +24,7 @@ var registCmd = &cobra.Command{
 
 		url := viper.GetString("consul.url")
 
-		client := consul.Init(url)
+		client := consul2.Init(url)
 
 		tags := viper.GetStringSlice("consul.tags")
 		println(tags)

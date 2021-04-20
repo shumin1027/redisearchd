@@ -24,7 +24,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: app.Version,
+	Version: app.BuildInfo(),
 	Use:     app.Name,
 	Short:   "RediSearch Restful API",
 	Long:    `RediSearch Restful API`,
