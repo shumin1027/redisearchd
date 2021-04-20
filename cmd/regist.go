@@ -59,6 +59,5 @@ func init() {
 	viper.BindPFlag("consul.tags", flags.Lookup("consul.tags"))
 
 	flags.StringSliceP("consul.meta", "m", []string{}, "consul service meta, e.g: --consul.meta=key:value")
-	viper.BindPFlag("consul.tags", flags.Lookup("consul.tags"))
-
+	viper.BindPFlag("consul.meta", flags.Lookup("consul.meta"))
 }

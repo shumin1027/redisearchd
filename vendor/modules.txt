@@ -4,7 +4,7 @@ github.com/KyleBanks/depth
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
-# github.com/RediSearch/redisearch-go v1.1.0 => ./libs/redisearch-go
+# github.com/RediSearch/redisearch-go v1.1.1-0.20210416071559-f79df23649c6
 ## explicit
 github.com/RediSearch/redisearch-go/redisearch
 # github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46
@@ -41,7 +41,7 @@ github.com/go-openapi/spec
 github.com/go-openapi/swag
 # github.com/godbus/dbus/v5 v5.0.4
 github.com/godbus/dbus/v5
-# github.com/gofiber/fiber/v2 v2.7.1
+# github.com/gofiber/fiber/v2 v2.8.0
 ## explicit
 github.com/gofiber/fiber/v2
 github.com/gofiber/fiber/v2/internal/bytebufferpool
@@ -112,7 +112,6 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/mitchellh/go-homedir v1.1.0
-## explicit
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.4.1
 github.com/mitchellh/mapstructure
@@ -159,14 +158,13 @@ github.com/tklauser/numcpus
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
 # github.com/valyala/fasthttp v1.23.0
-## explicit
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/reuseport
 github.com/valyala/fasthttp/stackless
 # github.com/valyala/tcplisten v1.0.0
 github.com/valyala/tcplisten
-# gitlab.xtc.home/xtc/clustermom-agent v0.0.0-20210419073557-75ecd4bc6f95
+# gitlab.xtc.home/xtc/clustermom-agent v0.0.0-20210420073109-7ed12e260f0b
 ## explicit
 gitlab.xtc.home/xtc/clustermom-agent/app
 # go.uber.org/atomic v1.7.0
@@ -181,11 +179,12 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d
+# golang.org/x/net v0.0.0-20210420072503-d25e30425868
+## explicit
 golang.org/x/net/idna
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20210419170143-37df388d1f33
+# golang.org/x/sys v0.0.0-20210420072515-93ed5bcd2bfe
 ## explicit
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
@@ -209,4 +208,3 @@ gopkg.in/ini.v1
 gopkg.in/natefinch/lumberjack.v2
 # gopkg.in/yaml.v2 v2.4.0
 gopkg.in/yaml.v2
-# github.com/RediSearch/redisearch-go => ./libs/redisearch-go
