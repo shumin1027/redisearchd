@@ -6,6 +6,7 @@ BUILDDIR = $(shell pwd)/bin
 build:clean fmt vet doc
 	@echo ">> building code"
 	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
+	strip $(BUILDDIR)/redisearchd
 
 .PHONY: fmt
 fmt:

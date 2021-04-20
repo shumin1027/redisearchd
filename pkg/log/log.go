@@ -1,9 +1,7 @@
 package log
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/app"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"log"
 )
 
@@ -11,37 +9,14 @@ var zapLogger *zap.Logger
 var stdLogger *log.Logger
 
 func init() {
-	cfg := zap.NewProductionConfig()
-	cfg.EncoderConfig = zapcore.EncoderConfig{
-		NameKey:    "logger",
-		MessageKey: "msg",
-
-		TimeKey:    "time",
-		EncodeTime: zapcore.ISO8601TimeEncoder, // ISO8601 UTC 时间格式
-
-		LevelKey:    "level",
-		EncodeLevel: zapcore.CapitalColorLevelEncoder, // 大写彩色 INFO
-
-		CallerKey:    "caller",
-		EncodeCaller: zapcore.ShortCallerEncoder, // 全路径编码器
-
-		StacktraceKey: "stacktrace",
-		LineEnding:    zapcore.DefaultLineEnding,
-
-		EncodeDuration: zapcore.SecondsDurationEncoder, //
-		EncodeName:     zapcore.FullNameEncoder,
-	}
-	cfg.Encoding = "console"
-	var err error
-	zapLogger, err = cfg.Build(zap.AddCaller())
-	if err != nil {
-		log.Panic(err)
-	}
+	// 默认启用开发环境配置
+	conf := DevLogConf()
+	zapLogger = NewLogger(conf)
 	stdLogger = zap.NewStdLog(zapLogger)
 }
 
-func Init(env, level, encoding, filePath string, stdout bool) {
-	zapLogger = NewLogger(env, filePath, level, encoding, 128, 30, 7, true, stdout, app.Name)
+func Init(conf *LogConf) {
+	zapLogger = NewLogger(conf)
 	Logger().Info("zap logger init success")
 }
 
