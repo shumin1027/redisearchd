@@ -9,13 +9,14 @@ GET     /indexes/{{index}}
 POST    /indexes/{{index}}
 DELETE  /indexes/{{index}}
 
+GET     /indexes/{{index}}/search
+POST    /indexes/{{index}}/search
+
 GET     /docs/{{docid}}
 POST    /docs
 DELETE  /docs/{{docid}}
 DELETE  /docs
 
-GET     /search/{{index}}
-POST    /search/{{index}}
 ```
 ---
 
