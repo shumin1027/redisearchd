@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/knadh/koanf/providers/posflag"
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
-	"log"
 )
 
 var startCmd = &cobra.Command{
@@ -37,8 +35,4 @@ func init() {
 	flags.IntP("web.port", "", 16379, "web listening port")
 	flags.StringP("redis.addr", "", "127.0.0.1:6379", "redis server addr")
 
-	provider := posflag.Provider(flags, ".", conf)
-	if err := conf.Load(provider, nil); err != nil {
-		log.Fatalf("error loading config: %v", err)
-	}
 }

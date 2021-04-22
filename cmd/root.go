@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/providers/posflag"
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"log"
@@ -16,6 +17,12 @@ var rootCmd = &cobra.Command{
 	Use:     app.Name,
 	Short:   "RediSearch Restful API",
 	Long:    `RediSearch Restful API`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		provider := posflag.Provider(cmd.PersistentFlags(), ".", conf)
+		if err := conf.Load(provider, nil); err != nil {
+			log.Fatalf("error loading config: %v", err)
+		}
+	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		startCmd.PreRun(cmd, args)
 	},
