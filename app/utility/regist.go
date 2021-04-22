@@ -4,7 +4,7 @@ import (
 	"fmt"
 	consul "github.com/hashicorp/consul/api"
 	"github.com/shirou/gopsutil/host"
-	"gitlab.xtc.home/xtc/clustermom-agent/app"
+	"gitlab.xtc.home/xtc/redisearchd/app"
 	"time"
 )
 

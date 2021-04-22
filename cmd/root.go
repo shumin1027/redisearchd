@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"github.com/knadh/koanf"
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"log"
 	"os"
 )
+
+var conf = koanf.New(".")
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

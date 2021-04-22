@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/knadh/koanf/providers/posflag"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
+	"log"
 )
 
 var startCmd = &cobra.Command{
@@ -15,11 +16,11 @@ var startCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
-		raw := viper.GetString("redis.addr")
+		raw := conf.String("redis.addr")
 		redis.Init(raw)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		port := viper.GetInt("web.port")
+		port := conf.Int("web.port")
 		addr := fmt.Sprintf(":%d", port)
 		http.Start(addr)
 	},
@@ -34,8 +35,10 @@ func init() {
 	flags := startCmd.PersistentFlags()
 
 	flags.IntP("web.port", "", 16379, "web listening port")
-	viper.BindPFlag("web.port", flags.Lookup("web.port"))
-
 	flags.StringP("redis.addr", "", "127.0.0.1:6379", "redis server addr")
-	viper.BindPFlag("redis.addr", flags.Lookup("redis.addr"))
+
+	provider := posflag.Provider(flags, ".", conf)
+	if err := conf.Load(provider, nil); err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
 }
