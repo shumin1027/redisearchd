@@ -3,10 +3,10 @@ module gitlab.xtc.home/xtc/redisearchd
 go 1.16
 
 require (
-	github.com/RediSearch/redisearch-go v1.1.1-0.20210416071559-f79df23649c6
+	github.com/RediSearch/redisearch-go v1.1.1
 	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/armon/go-metrics v0.3.6 // indirect
+	github.com/armon/go-metrics v0.3.7 // indirect
 	github.com/arsmn/fiber-swagger/v2 v2.6.0
 	github.com/coreos/go-systemd/v22 v22.3.1
 	github.com/fatih/color v1.10.0 // indirect
@@ -34,8 +34,8 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/net v0.0.0-20210421230115-4e50805a0758 // indirect
-	golang.org/x/sys v0.0.0-20210421221651-33663a62ff08 // indirect
+	golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6 // indirect
+	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 

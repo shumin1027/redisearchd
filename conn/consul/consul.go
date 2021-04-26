@@ -1,10 +1,7 @@
 package consul
 
 import (
-	"errors"
 	consulapi "github.com/hashicorp/consul/api"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
-	"go.uber.org/zap"
 	"net/url"
 )
 
@@ -54,19 +51,4 @@ func Client() *consulapi.Client {
 		}
 	}
 	return consul.client
-}
-
-func KVGet(key string) ([]byte, error) {
-	client := Client()
-	kv := client.KV()
-	kvp, _, err := kv.Get(key, nil)
-	if err != nil {
-		log.Error("read consul kv error", zap.String("key", key), zap.Error(err))
-		return nil, err
-	}
-	if kvp == nil {
-		log.Debug("the key does not exist", zap.String("key", key))
-		return nil, errors.New("the key does not exist")
-	}
-	return kvp.Value, err
 }

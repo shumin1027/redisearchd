@@ -4,7 +4,7 @@ github.com/KyleBanks/depth
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
-# github.com/RediSearch/redisearch-go v1.1.1-0.20210416071559-f79df23649c6
+# github.com/RediSearch/redisearch-go v1.1.1
 ## explicit
 github.com/RediSearch/redisearch-go/redisearch
 # github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46
@@ -16,7 +16,7 @@ github.com/alecthomas/template
 github.com/alecthomas/template/parse
 # github.com/andybalholm/brotli v1.0.1
 github.com/andybalholm/brotli
-# github.com/armon/go-metrics v0.3.6
+# github.com/armon/go-metrics v0.3.7
 ## explicit
 github.com/armon/go-metrics
 # github.com/arsmn/fiber-swagger/v2 v2.6.0
@@ -176,12 +176,12 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
 # golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 ## explicit
-# golang.org/x/net v0.0.0-20210421230115-4e50805a0758
+# golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6
 ## explicit
 golang.org/x/net/idna
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20210421221651-33663a62ff08
+# golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7
 ## explicit
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
