@@ -23,11 +23,8 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("error loading config: %v", err)
 		}
 	},
-	PreRun: func(cmd *cobra.Command, args []string) {
-		startCmd.PreRun(cmd, args)
-	},
 	Run: func(cmd *cobra.Command, args []string) {
-		startCmd.Run(cmd, args)
+		cmd.Help()
 	},
 }
 
