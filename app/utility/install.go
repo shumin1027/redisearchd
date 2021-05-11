@@ -120,7 +120,7 @@ func InstallUnit() {
 
 	opts = append(opts, unit.NewUnitOption("Unit", "Description", app.Description))
 	opts = append(opts, unit.NewUnitOption("Unit", "Documentation", app.Repository))
-	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)))
+	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)+" start"))
 	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service compubiq-%s.service", app.Name, app.Name)))
 	r := unit.Serialize(opts)
 
