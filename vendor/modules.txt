@@ -15,7 +15,6 @@ github.com/StackExchange/wmi
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
 # github.com/andybalholm/brotli v1.0.2
-## explicit
 github.com/andybalholm/brotli
 # github.com/armon/go-metrics v0.3.8
 ## explicit
@@ -27,7 +26,7 @@ github.com/arsmn/fiber-swagger/v2
 ## explicit
 github.com/coreos/go-systemd/v22/dbus
 github.com/coreos/go-systemd/v22/unit
-# github.com/fatih/color v1.10.0
+# github.com/fatih/color v1.11.0
 ## explicit
 github.com/fatih/color
 # github.com/go-ole/go-ole v1.2.5
@@ -45,7 +44,7 @@ github.com/go-openapi/spec
 github.com/go-openapi/swag
 # github.com/godbus/dbus/v5 v5.0.4
 github.com/godbus/dbus/v5
-# github.com/gofiber/fiber/v2 v2.9.0
+# github.com/gofiber/fiber/v2 v2.10.0
 ## explicit
 github.com/gofiber/fiber/v2
 github.com/gofiber/fiber/v2/internal/bytebufferpool
@@ -94,11 +93,10 @@ github.com/josharian/intern
 ## explicit
 github.com/json-iterator/go
 # github.com/klauspost/compress v1.12.2
-## explicit
 github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
-# github.com/knadh/koanf v0.16.0
+# github.com/knadh/koanf v1.0.0
 ## explicit
 github.com/knadh/koanf
 github.com/knadh/koanf/maps
@@ -113,12 +111,10 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/mitchellh/copystructure v1.2.0
-## explicit
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.4.1
-## explicit
 github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.2
 github.com/mitchellh/reflectwalk
@@ -148,14 +144,14 @@ github.com/swaggo/files
 # github.com/swaggo/swag v1.7.0
 ## explicit
 github.com/swaggo/swag
-# github.com/tklauser/go-sysconf v0.3.5
+# github.com/tklauser/go-sysconf v0.3.6
 ## explicit
 github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.2.2
 github.com/tklauser/numcpus
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v1.24.0
+# github.com/valyala/fasthttp v1.25.0
 ## explicit
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
@@ -176,15 +172,12 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
-## explicit
-# golang.org/x/net v0.0.0-20210510120150-4163338589ed
+# golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
 ## explicit
 golang.org/x/net/idna
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20210510120138-977fb7262007
-## explicit
+# golang.org/x/sys v0.0.0-20210514084401-e8d321eab015
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -195,7 +188,8 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.1.0
+# golang.org/x/tools v0.1.1
+## explicit
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/buildutil
 golang.org/x/tools/go/internal/cgo

@@ -41,7 +41,7 @@ type Request struct {
 
 	multipartForm         *multipart.Form
 	multipartFormBoundary string
-	secureErrorLogMessage        bool
+	secureErrorLogMessage bool
 
 	// Group bool members in order to reduce Request object size.
 	parsedURI      bool
@@ -88,7 +88,7 @@ type Response struct {
 	// Use it for writing HEAD responses.
 	SkipBody bool
 
-	keepBodyBuffer bool
+	keepBodyBuffer        bool
 	secureErrorLogMessage bool
 
 	// Remote TCPAddr from concurrently net.Conn
@@ -1111,7 +1111,10 @@ func (req *Request) ContinueReadBody(r *bufio.Reader, maxBodySize int, preParseM
 		// the end of body is determined by connection close.
 		// So just ignore request body for requests without
 		// 'Content-Length' and 'Transfer-Encoding' headers.
-		req.Header.SetContentLength(0)
+		// refer to https://tools.ietf.org/html/rfc7230#section-3.3.2
+		if !req.Header.ignoreBody() {
+			req.Header.SetContentLength(0)
+		}
 		return nil
 	}
 
@@ -2072,25 +2075,35 @@ func parseChunkSize(r *bufio.Reader) (int, error) {
 		if c == ' ' {
 			continue
 		}
-		if c != '\r' {
+		if err := r.UnreadByte(); err != nil {
 			return -1, ErrBrokenChunk{
-				error: fmt.Errorf("unexpected char %q at the end of chunk size. Expected %q", c, '\r'),
+				error: fmt.Errorf("cannot unread '\r' char at the end of chunk size: %s", err),
 			}
 		}
 		break
 	}
-	c, err := r.ReadByte()
+	err = readCrLf(r)
 	if err != nil {
-		return -1, ErrBrokenChunk{
-			error: fmt.Errorf("cannot read '\n' char at the end of chunk size: %s", err),
-		}
-	}
-	if c != '\n' {
-		return -1, ErrBrokenChunk{
-			error: fmt.Errorf("unexpected char %q at the end of chunk size. Expected %q", c, '\n'),
-		}
+		return -1, err
 	}
 	return n, nil
+}
+
+func readCrLf(r *bufio.Reader) error {
+	for _, exp := range []byte{'\r', '\n'} {
+		c, err := r.ReadByte()
+		if err != nil {
+			return ErrBrokenChunk{
+				error: fmt.Errorf("cannot read %q char at the end of chunk size: %s", exp, err),
+			}
+		}
+		if c != exp {
+			return ErrBrokenChunk{
+				error: fmt.Errorf("unexpected char %q at the end of chunk size. Expected %q", c, exp),
+			}
+		}
+	}
+	return nil
 }
 
 func round2(n int) int {
