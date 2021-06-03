@@ -87,6 +87,7 @@ func Route(a *fiber.App) *fiber.App {
 
 	routers["doc"] = NewDocRouter(a.Group("/docs"))
 	routers["index"] = NewIndexRouter(a.Group("/indexes"))
+	routers["key"] = NewKeyRouter(a.Group("/keys"))
 	routers["search"] = NewSearchRouter(a.Group("/search"))
 
 	for _, v := range routers {

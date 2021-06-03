@@ -318,7 +318,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "search"
+                    "index"
                 ],
                 "summary": "Search in an index with POST",
                 "parameters": [
@@ -339,6 +339,80 @@ var doc = `{
                                 "$ref": "#/definitions/http.Response"
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/keys/{key}": {
+            "get": {
+                "description": "Get key",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "key"
+                ],
+                "summary": "Get key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "description": "Update key,Use \"HSET\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "key"
+                ],
+                "summary": "Update key,Use \"HSET\"",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete key,Use \"Del\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "key"
+                ],
+                "summary": "Delete key,Use \"Del\"",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "index name",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
                     }
                 }
             }
