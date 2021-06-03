@@ -1,4 +1,4 @@
-@server=http://127.0.0.1:16379
+@server = http://127.0.0.1:16379
 
 ### 创建索引
 ### schema.fields.type: 0-Text;1-Numeric;2-Geo;3-Tag
@@ -146,4 +146,20 @@ Content-Type: application/json
     "summarize_opts": null
 }
 
+### 获取redisearch索引列表
+GET {{server}}/indexes
 
+### 查看索引结构
+GET {{server}}/indexes/prometheus-alert
+
+### 使用redisearch搜索语句进行搜索
+GET {{server}}/indexes/prometheus-alert/search?raw=@alertname:cpu*
+
+### 修改值,上面搜索后的DOC有ID,key放的就是id
+PUT {{server}}/keys/prometheus:alert:b8d59a88adc45c8b
+
+{
+    "read_status":false
+}
+### 获取对应DOCID的值
+GET {{server}}/keys/prometheus:alert:b8d59a88adc45c8b

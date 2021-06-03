@@ -18,7 +18,7 @@ func Success(c *fiber.Ctx, inventory interface{}) error {
 		Success:   true,
 		Inventory: inventory,
 	}
-	return c.Status(http.StatusInternalServerError).JSON(rep)
+	return c.Status(http.StatusOK).JSON(rep)
 }
 
 // 4xx 处理失败
@@ -37,5 +37,5 @@ func Fail(c *fiber.Ctx, msg string, code ...int) error {
 
 // 5xx 处理出错
 func Error(c *fiber.Ctx, err error) error {
-	return c.Status(http.StatusInternalServerError).SendString(err.Error())
+	return c.Status(http.StatusInternalServerError).JSON(err.Error())
 }

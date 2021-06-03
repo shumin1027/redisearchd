@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"testing"
 )
 
 func TestCreateIndex(t *testing.T) {
-	cli := redis.Client("test")
+	cli := search.NewClient("test")
 	sc := redisearch.NewSchema(redisearch.DefaultOptions).
 		AddField(redisearch.NewTextField("body")).
 		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
@@ -20,14 +20,14 @@ func TestCreateIndex(t *testing.T) {
 }
 
 func TestListIndexes(t *testing.T) {
-	cli := redis.Client("test")
+	cli := search.NewClient("test")
 	indexes, _ := ListIndexes(context.Background(), cli)
 	data, _ := json.Marshal(indexes)
 	println(string(data))
 }
 
 func TestInfo(t *testing.T) {
-	cli := redis.Client("test")
+	cli := search.NewClient("test")
 	info, _ := Info(context.Background(), cli)
 	data, _ := json.Marshal(info)
 	println(string(data))

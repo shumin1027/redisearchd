@@ -1,8 +1,8 @@
 package http
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"strconv"
 	"strings"
 
@@ -42,7 +42,7 @@ func (r *IndexRouter) Route() {
 // @Router /indexes [GET]
 // @Success 200 {array} string
 func List(c *fiber.Ctx) error {
-	cli := redis.DummyClient()
+	cli := search.NewClient("_redisearch_")
 	indexes, err := self.ListIndexes(c.Context(), cli)
 	if err != nil {
 		return http.Error(c, err)
@@ -59,8 +59,8 @@ func List(c *fiber.Ctx) error {
 // @Success 200 {object} http.Response
 func Info(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := redis.Client(index)
-	info, err := self.Info(c.Context(), cli)
+	client := search.NewClient(index)
+	info, err := client.Info()
 	if err != nil {
 		return http.Error(c, err)
 	}
@@ -81,7 +81,7 @@ func DropIndex(c *fiber.Ctx) error {
 	if len(c.Query("deldocs")) > 0 && strings.ToLower(c.Query("deldocs")) == "true" {
 		deldocs = true
 	}
-	cli := redis.Client(index)
+	cli := search.NewClient(index)
 	err := self.DropIndex(c.Context(), cli, deldocs)
 	if err != nil {
 		return http.Error(c, err)
@@ -108,7 +108,7 @@ func CreateIndex(c *fiber.Ctx) error {
 		return http.Error(c, err)
 	}
 	index := c.Params("index")
-	cli := redis.Client(index)
+	cli := search.NewClient(index)
 	if err := self.CreateIndex(c.Context(), cli, req.Schema, req.IndexDefinition); err != nil {
 		return http.Error(c, err)
 	}
@@ -132,7 +132,7 @@ func CreateIndex(c *fiber.Ctx) error {
 // @Success 200 {array} http.Response
 func SearchIndexByGet(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := redis.Client(index)
+	cli := search.NewClient(index)
 
 	raw := c.Query("raw")
 
@@ -221,13 +221,13 @@ func SearchIndexByGet(c *fiber.Ctx) error {
 // @Summary Search in an index with POST
 // @Description Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
 // @Produce application/json
-// @Tags search
+// @Tags index
 // @Router /indexes/{index}/search [POST]
 // @Param index path string true "index name"
 // @Success 200 {array} http.Response
 func SearchIndexByPost(c *fiber.Ctx) error {
 	index := c.Params("index")
-	cli := redis.Client(index)
+	cli := search.NewClient(index)
 	var query = new(redisearch.Query)
 	body := c.Request().Body()
 
