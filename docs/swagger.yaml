@@ -77,6 +77,55 @@ paths:
       summary: Get Doc By Id
       tags:
       - doc
+  /documents/{document_id}:
+    delete:
+      description: Delete key,Use "Del"
+      parameters:
+      - description: index name
+        in: path
+        name: document_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Delete key,Use "Del"
+      tags:
+      - document
+    get:
+      description: Get key
+      parameters:
+      - description: index name
+        in: path
+        name: document_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get key
+      tags:
+      - document
+    put:
+      description: Update key,Use "HSET"
+      parameters:
+      - description: index name
+        in: path
+        name: document_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Update key,Use "HSET"
+      tags:
+      - document
   /indexes:
     get:
       description: List all indexes
@@ -244,55 +293,6 @@ paths:
       summary: Search in an index with POST
       tags:
       - index
-  /keys/{key}:
-    delete:
-      description: Delete key,Use "Del"
-      parameters:
-      - description: index name
-        in: path
-        name: key
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Delete key,Use "Del"
-      tags:
-      - key
-    get:
-      description: Get key
-      parameters:
-      - description: index name
-        in: path
-        name: key
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Get key
-      tags:
-      - key
-    put:
-      description: Update key,Use "HSET"
-      parameters:
-      - description: index name
-        in: path
-        name: key
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Update key,Use "HSET"
-      tags:
-      - key
   /search/{index}:
     get:
       description: Searches the index with a textual query, returning either documents

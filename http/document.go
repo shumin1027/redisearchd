@@ -8,34 +8,34 @@ import (
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 )
 
-type KeyRouter struct {
+type DocumentsRouter struct {
 	*fiber.Group
 }
 
-func NewKeyRouter(r fiber.Router) *KeyRouter {
+func NewDocumentsRouter(r fiber.Router) *DocumentsRouter {
 	g, ok := r.(*fiber.Group)
 	if ok {
-		return &KeyRouter{g}
+		return &DocumentsRouter{g}
 	}
 	return nil
 }
 
-func (r *KeyRouter) Route() {
-	r.Get("/:key", GetKeyAll)
-	r.Put("/:key", UpdateKeyAll)
-	r.Delete("/:key", DeleteKey)
+func (r *DocumentsRouter) Route() {
+	r.Get("/:document_id", GetKeyAll)
+	r.Put("/:document_id", UpdateKeyAll)
+	r.Delete("/:document_id", DeleteKey)
 }
 
 // GetKeyAll
 // @Summary Get key
 // @Description Get key
 // @Produce application/json
-// @Tags key
-// @Router /keys/{key} [GET]
-// @Param key path string true "index name"
+// @Tags document
+// @Router /documents/{document_id} [GET]
+// @Param document_id path string true "index name"
 // @Success 200
 func GetKeyAll(c *fiber.Ctx) error {
-	key := c.Params("key")
+	key := c.Params("document_id")
 	client := redis.Client()
 	result, err := client.HGetAll(context.TODO(), key).Result()
 	if err != nil {
@@ -48,12 +48,12 @@ func GetKeyAll(c *fiber.Ctx) error {
 // @Summary Update key,Use "HSET"
 // @Description Update key,Use "HSET"
 // @Produce application/json
-// @Tags key
-// @Router /keys/{key} [PUT]
-// @Param key path string true "index name"
+// @Tags document
+// @Router /documents/{document_id} [PUT]
+// @Param document_id path string true "index name"
 // @Success 200
 func UpdateKeyAll(c *fiber.Ctx) error {
-	key := c.Params("key")
+	key := c.Params("document_id")
 	var values map[string]interface{}
 	data := c.Body()
 	err := json.Unmarshal(data, &values)
@@ -72,12 +72,12 @@ func UpdateKeyAll(c *fiber.Ctx) error {
 // @Summary Delete key,Use "Del"
 // @Description Delete key,Use "Del"
 // @Produce application/json
-// @Tags key
-// @Router /keys/{key} [DELETE]
-// @Param key path string true "index name"
+// @Tags document
+// @Router /documents/{document_id} [DELETE]
+// @Param document_id path string true "index name"
 // @Success 200
 func DeleteKey(c *fiber.Ctx) error {
-	key := c.Params("key")
+	key := c.Params("document_id")
 	client := redis.Client()
 	_, err := client.Del(context.TODO(), key).Result()
 	if err != nil {
