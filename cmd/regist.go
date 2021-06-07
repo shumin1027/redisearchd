@@ -14,7 +14,7 @@ var registCmd = &cobra.Command{
 	Short: "Regist Service To Consul",
 	Long:  `Regist Service To Consul`,
 	Run: func(cmd *cobra.Command, args []string) {
-		port := conf.Int("web.port")
+		port := conf.Int("http.port")
 
 		ip := conf.String("ip")
 		if ip == "" {
@@ -44,7 +44,7 @@ func init() {
 	flags := registCmd.PersistentFlags()
 
 	flags.StringP("ip", "i", "", "server ip")
-	flags.IntP("port", "p", 16379, "server port")
+	flags.IntP("http.port", "p", 16379, "server port")
 	flags.StringP("consul.url", "u", "http://consul.service.consul:8500", "consul server url")
 	flags.StringSliceP("consul.tags", "t", []string{}, "consul service tags, e.g: --consul.tags=t1,t2 --consul.tags=t3")
 	flags.StringSliceP("consul.meta", "m", []string{}, "consul service meta, e.g: --consul.meta=key:value")

@@ -41,7 +41,7 @@ func init() {
 
 	flags := startCmd.PersistentFlags()
 
-	flags.IntP("http.port", "", 16379, "web listening port")
-	flags.StringP("redis.url", "", "redis://redis.service.consul:6379?db=0", "redis server url")
+	flags.IntP("http.port", "p", 16379, "web listening port")
+	flags.StringP("redis.url", "", "redis://redis.service.consul:6379/0", "redis server url")
 
 }

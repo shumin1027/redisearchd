@@ -46,7 +46,7 @@ func ParseRedisURL(raw string) (address, password string, database int) {
 	}
 	address = u.Host
 
-	db := u.Query().Get("db")
+	db := u.Path[1:len(u.Path)]
 	database, err = strconv.Atoi(db)
 	if err != nil {
 		log.Logger().Warn("parse redis database failed", zap.Error(err))
