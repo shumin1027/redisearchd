@@ -12,7 +12,6 @@ require (
 	github.com/fatih/color v1.11.0 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
-	github.com/go-redis/redis/v8 v8.9.0
 	github.com/gofiber/fiber/v2 v2.10.0
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/hashicorp/consul/api v1.8.1

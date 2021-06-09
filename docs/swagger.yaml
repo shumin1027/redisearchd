@@ -77,45 +77,12 @@ paths:
       summary: Get Doc By Id
       tags:
       - doc
-  /documents/{document_id}:
-    delete:
-      description: Delete key,Use "Del"
-      parameters:
-      - description: index name
-        in: path
-        name: document_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Delete key,Use "Del"
-      tags:
-      - document
-    get:
-      description: Get key
-      parameters:
-      - description: index name
-        in: path
-        name: document_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Get key
-      tags:
-      - document
     put:
       description: Update key,Use "HSET"
       parameters:
-      - description: index name
+      - description: document id
         in: path
-        name: document_id
+        name: id
         required: true
         type: string
       produces:
@@ -125,7 +92,7 @@ paths:
           description: ""
       summary: Update key,Use "HSET"
       tags:
-      - document
+      - doc
   /indexes:
     get:
       description: List all indexes

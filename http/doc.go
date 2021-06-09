@@ -1,12 +1,14 @@
 package http
 
 import (
+	"context"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/redis"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
@@ -27,6 +29,8 @@ func (r *DocRouter) Route() {
 	r.Post("", CreateDocs)
 	r.Delete("", DeleteDocs)
 	r.Delete("/:id", DeleteDocById)
+
+	r.Put("/:id", UpdateDocById)
 }
 
 // @Summary Get Doc By Id
@@ -75,9 +79,7 @@ func CreateDocs(c *fiber.Ctx) error {
 // @Success 204 {string} string ""
 func DeleteDocById(c *fiber.Ctx) error {
 	id := c.Params("id")
-
-	conn := search.NewConnPool()
-	err := self.DeleteDocs(c.Context(), conn, id)
+	_, err := redis.Del(c.Context(), id)
 	if err != nil {
 		return http.Error(c, err)
 	}
@@ -97,12 +99,34 @@ func DeleteDocs(c *fiber.Ctx) error {
 	if err := json.Unmarshal(body, &ids); err != nil {
 		return http.Error(c, err)
 	}
-	conn := search.NewConnPool()
-	err := self.DeleteDocs(c.Context(), conn, ids...)
+	_, err := redis.Del(c.Context(), ids...)
 
 	if err != nil {
 		return http.Error(c, err)
 	}
 
 	return c.SendStatus(http.StatusNoContent)
+}
+
+//UpdateDocById
+//@Summary Update key,Use "HSET"
+//@Description Update key,Use "HSET"
+//@Produce application/json
+//@Tags doc
+//@Router /docs/{id} [PUT]
+//@Param id path string true "document id"
+//@Success 200
+func UpdateDocById(c *fiber.Ctx) error {
+	key := c.Params("id")
+	var values map[string]interface{}
+	data := c.Body()
+	err := json.Unmarshal(data, &values)
+	if err != nil {
+		return http.Error(c, err)
+	}
+	_, err = redis.HSet(context.TODO(), key, values)
+	if err != nil {
+		return http.Error(c, err)
+	}
+	return http.Success(c, fiber.Map{})
 }
