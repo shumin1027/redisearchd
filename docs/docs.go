@@ -90,6 +90,30 @@ var doc = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update key,Use \"HSET\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Update key,Use \"HSET\"",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete One Doc By Id",
                 "produces": [
@@ -105,80 +129,6 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
-                    }
-                }
-            }
-        },
-        "/documents/{document_id}": {
-            "get": {
-                "description": "Get key",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "document"
-                ],
-                "summary": "Get key",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "index name",
-                        "name": "document_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                }
-            },
-            "put": {
-                "description": "Update key,Use \"HSET\"",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "document"
-                ],
-                "summary": "Update key,Use \"HSET\"",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "index name",
-                        "name": "document_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete key,Use \"Del\"",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "document"
-                ],
-                "summary": "Delete key,Use \"Del\"",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "index name",
-                        "name": "document_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": ""
                     }
                 }
             }

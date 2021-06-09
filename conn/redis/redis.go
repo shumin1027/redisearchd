@@ -1,42 +1,41 @@
 package redis
 
 import (
-	"context"
-	"github.com/go-redis/redis/v8"
+	"github.com/gomodule/redigo/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 	"go.uber.org/zap"
 	"net/url"
 	"strconv"
 )
 
-var redisClient redis.UniversalClient
+var pool *redis.Pool
 
-func InitRedis(url string) error {
-	address, password, database := ParseRedisURL(url)
+//var redisClient redis.UniversalClient
 
-	redisClient = redis.NewUniversalClient(&redis.UniversalOptions{
-		Addrs:        []string{address},
-		Password:     password,
-		DB:           database,
-		MaxRetries:   5,
-		MinIdleConns: 10,
-		PoolSize:     1000,
-	})
-
-	_, err := redisClient.Ping(context.Background()).Result()
-	if err != nil {
-		log.Logger().Error("Init Redis Error", zap.Error(err))
-		return err
-	}
-	return nil
+func InitRedis(raw string) {
+	address, password, _ := ParseRedisURL(raw)
+	pool = &redis.Pool{Dial: func() (redis.Conn, error) {
+		var conn redis.Conn
+		var err error
+		if password != "" {
+			conn, err = redis.Dial("tcp", address, redis.DialPassword(password))
+		} else {
+			conn, err = redis.Dial("tcp", address)
+		}
+		return conn, err
+	}}
 }
 
-func Client() redis.UniversalClient {
-	return redisClient
+func Client() redis.Conn {
+	return pool.Get()
+}
+
+func Pool() *redis.Pool {
+	return pool
 }
 
 func Close() error {
-	return redisClient.Close()
+	return pool.Close()
 }
 
 func ParseRedisURL(raw string) (address, password string, database int) {

@@ -5,9 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
-	"go.uber.org/zap"
 )
 
 var startCmd = &cobra.Command{
@@ -18,13 +16,9 @@ var startCmd = &cobra.Command{
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
 		raw := conf.String("redis.url")
-
+		redis.InitRedis(raw)
 		address, password, _ := redis.ParseRedisURL(raw)
-		search.NewPool(address, password)
-		err := redis.InitRedis(raw)
-		if err != nil {
-			log.Logger().Fatal("redis client init error", zap.Error(err))
-		}
+		search.InitPool(address, password)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		port := conf.Int("http.port")
