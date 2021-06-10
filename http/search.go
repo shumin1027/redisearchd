@@ -1,8 +1,8 @@
 package http
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"strconv"
 	"strings"
 
@@ -12,7 +12,7 @@ import (
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
-// PAGE_NUM_LIMIT_MAX 分页最大数量限制
+// 分页最大数量限制
 const PAGE_NUM_LIMIT_MAX = 1_000_000
 
 type SearchRouter struct {
@@ -60,7 +60,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	if len(plimit) > 0 {
 		limit, err = strconv.Atoi(plimit)
 		if err != nil {
-			return http.Fail(c, err.Error())
+			return http.Error(c, err)
 		}
 		if limit > PAGE_NUM_LIMIT_MAX {
 			limit = PAGE_NUM_LIMIT_MAX
@@ -73,7 +73,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	if len(poffset) > 0 {
 		offset, err = strconv.Atoi(c.Query("offset"))
 		if err != nil {
-			return http.Fail(c, err.Error())
+			return http.Error(c, err)
 		}
 	}
 
@@ -149,11 +149,11 @@ func SearchByPost(c *fiber.Ctx) error {
 	body := c.Request().Body()
 
 	if err := json.Unmarshal(body, query); err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, fiber.Map{
 		"docs":  docs,

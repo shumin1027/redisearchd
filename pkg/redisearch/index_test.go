@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"testing"
 )
 

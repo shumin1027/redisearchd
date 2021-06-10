@@ -1,8 +1,8 @@
 package http
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"strconv"
 	"strings"
 
@@ -45,7 +45,7 @@ func List(c *fiber.Ctx) error {
 	cli := search.NewClient("_redisearch_")
 	indexes, err := self.ListIndexes(c.Context(), cli)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, indexes)
 }
@@ -62,7 +62,7 @@ func Info(c *fiber.Ctx) error {
 	client := search.NewClient(index)
 	info, err := client.Info()
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, info)
 }
@@ -84,7 +84,7 @@ func DropIndex(c *fiber.Ctx) error {
 	cli := search.NewClient(index)
 	err := self.DropIndex(c.Context(), cli, deldocs)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return c.SendStatus(http.StatusNoContent)
 }
@@ -105,12 +105,12 @@ func CreateIndex(c *fiber.Ctx) error {
 	var req CreateIndexReq
 	body := c.Request().Body()
 	if err := json.Unmarshal(body, &req); err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	index := c.Params("index")
 	cli := search.NewClient(index)
 	if err := self.CreateIndex(c.Context(), cli, req.Schema, req.IndexDefinition); err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return c.SendStatus(http.StatusCreated)
 }
@@ -143,7 +143,7 @@ func SearchIndexByGet(c *fiber.Ctx) error {
 	if len(plimit) > 0 {
 		limit, err = strconv.Atoi(plimit)
 		if err != nil {
-			return http.Fail(c, err.Error())
+			return http.Error(c, err)
 		}
 		if limit > PAGE_NUM_LIMIT_MAX {
 			limit = PAGE_NUM_LIMIT_MAX
@@ -156,7 +156,7 @@ func SearchIndexByGet(c *fiber.Ctx) error {
 	if len(poffset) > 0 {
 		offset, err = strconv.Atoi(c.Query("offset"))
 		if err != nil {
-			return http.Fail(c, err.Error())
+			return http.Error(c, err)
 		}
 	}
 
@@ -210,7 +210,7 @@ func SearchIndexByGet(c *fiber.Ctx) error {
 
 	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, fiber.Map{
 		"docs":  docs,
@@ -236,7 +236,7 @@ func SearchIndexByPost(c *fiber.Ctx) error {
 	}
 	docs, total, err := self.Search(c.Context(), cli, query)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, fiber.Map{
 		"docs":  docs,

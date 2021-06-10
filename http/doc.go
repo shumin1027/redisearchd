@@ -2,13 +2,12 @@ package http
 
 import (
 	"context"
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/redis"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
 
@@ -45,7 +44,7 @@ func GetDocById(c *fiber.Ctx) error {
 	fields := c.Query("fields")
 	doc, err := self.GetDocById(c.Context(), search.NewConnPool(), id, strings.Split(fields, ",")...)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return http.Success(c, doc)
 }
@@ -61,12 +60,12 @@ func CreateDocs(c *fiber.Ctx) error {
 	body := c.Request().Body()
 
 	if err := json.Unmarshal(body, &docs); err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
-	conn := search.NewConnPool()
-	err := self.AddDocs(c.Context(), conn, docs...)
+	pool := search.NewConnPool()
+	err := self.AddDocs(c.Context(), pool, docs...)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return c.SendStatus(http.StatusCreated)
 }
@@ -79,9 +78,10 @@ func CreateDocs(c *fiber.Ctx) error {
 // @Success 204 {string} string ""
 func DeleteDocById(c *fiber.Ctx) error {
 	id := c.Params("id")
-	_, err := redis.Del(c.Context(), id)
+	connPool := search.NewConnPool()
+	err := self.DeleteDocs(c.Context(), connPool, id)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 	return c.SendStatus(http.StatusNoContent)
 }
@@ -97,12 +97,13 @@ func DeleteDocs(c *fiber.Ctx) error {
 	body := c.Request().Body()
 
 	if err := json.Unmarshal(body, &ids); err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
-	_, err := redis.Del(c.Context(), ids...)
+	connPool := search.NewConnPool()
+	err := self.DeleteDocs(c.Context(), connPool, ids...)
 
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
 	}
 
 	return c.SendStatus(http.StatusNoContent)
@@ -118,15 +119,19 @@ func DeleteDocs(c *fiber.Ctx) error {
 //@Success 200
 func UpdateDocById(c *fiber.Ctx) error {
 	key := c.Params("id")
-	var values map[string]interface{}
-	data := c.Body()
-	err := json.Unmarshal(data, &values)
-	if err != nil {
-		return http.Fail(c, err.Error())
+	type UpdateDocPayload struct {
+		Properties map[string]interface{} `json:"properties"`
 	}
-	_, err = redis.HSet(context.TODO(), key, values)
+	var payload UpdateDocPayload
+	data := c.Body()
+	err := json.Unmarshal(data, &payload)
 	if err != nil {
-		return http.Fail(c, err.Error())
+		return http.Error(c, err)
+	}
+	connPool := search.NewConnPool()
+	err = self.UpdateDocById(context.TODO(), connPool, key, payload.Properties)
+	if err != nil {
+		return http.Error(c, err)
 	}
 	return http.Success(c, fiber.Map{})
 }

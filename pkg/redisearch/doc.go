@@ -138,19 +138,34 @@ func GetDocById(ctx context.Context, connpool redisearch.ConnPool, id string, fi
 	return doc, nil
 }
 
-//func DeleteDocs(ctx context.Context, connpool redisearch.ConnPool, ids ...string) error {
-//	conn := connpool.Get()
-//	defer conn.Close()
-//
-//	args := redis.Args{}
-//
-//	for _, id := range ids {
-//		args = args.Add(id)
-//	}
-//
-//	if _, err := conn.Do("DEL", args...); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
+func DeleteDocs(ctx context.Context, connpool redisearch.ConnPool, ids ...string) error {
+	conn := connpool.Get()
+	defer conn.Close()
+
+	args := redis.Args{}
+
+	for _, id := range ids {
+		args = args.Add(id)
+	}
+
+	if _, err := conn.Do("DEL", args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateDocById(ctx context.Context, connpool redisearch.ConnPool, key string, values map[string]interface{}) error {
+	conn := connpool.Get()
+	defer conn.Close()
+	args := redis.Args{}
+
+	args = args.Add(key)
+	for k, v := range values {
+		args = args.Add(k)
+		args = args.Add(v)
+	}
+
+	_, err := conn.Do("HSET", args...)
+	return err
+}

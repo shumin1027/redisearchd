@@ -3,9 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"gitlab.xtc.home/xtc/redisearchd/http"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/search"
 )
 
 var startCmd = &cobra.Command{
@@ -16,9 +15,7 @@ var startCmd = &cobra.Command{
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
 		raw := conf.String("redis.url")
-		redis.InitRedis(raw)
-		address, password, _ := redis.ParseRedisURL(raw)
-		search.InitPool(address, password)
+		search.InitPool(raw)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		port := conf.Int("http.port")

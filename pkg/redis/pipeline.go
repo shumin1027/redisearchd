@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"github.com/gomodule/redigo/redis"
-	conn "gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 )
 
@@ -11,8 +10,8 @@ type PipeLine struct {
 	redis.Conn
 }
 
-func Pipeline(ctx context.Context) *PipeLine {
-	return &PipeLine{conn.Client()}
+func Pipeline(ctx context.Context, conn redis.Conn) *PipeLine {
+	return &PipeLine{conn}
 }
 
 func (p *PipeLine) HSet(ctx context.Context, key string, values map[string]interface{}) error {
