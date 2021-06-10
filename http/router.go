@@ -1,7 +1,7 @@
 package http
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
+	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"log"
 	"net/http"
 	"os"
@@ -131,7 +131,7 @@ func graceful(app *fiber.App) {
 	log.Println("running cleanup tasks...")
 	// Your cleanup tasks go heremak
 	log.Println("closeing redis conn...")
-	if err := redis.Close(); err != nil {
+	if err := search.Close(); err != nil {
 		log.Fatal("close redis conn:", err)
 	}
 
