@@ -156,10 +156,16 @@ GET {{server}}/indexes/prometheus-alert
 GET {{server}}/indexes/prometheus-alert/search?raw=@alertname:cpu*
 
 ### 修改值,上面搜索后的DOC有ID,key放的就是id
-PUT {{server}}/documents/prometheus:alert:b8d59a88adc45c8b
+PUT {{server}}/docs
 
-{
-    "read_status":false
-}
+[
+    {
+        "id": "prometheus:alert:b8d59a88adc45c8b",
+        "properties": {
+            "test_key":"value1"
+        }
+    }
+]
+
 ### 获取对应DOCID的值
 GET {{server}}/documents/prometheus:alert:b8d59a88adc45c8b

@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"gitlab.xtc.home/xtc/redisearchd/conn/search"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strings"
@@ -29,7 +28,7 @@ func (r *DocRouter) Route() {
 	r.Delete("", DeleteDocs)
 	r.Delete("/:id", DeleteDocById)
 
-	r.Put("/:id", UpdateDocById)
+	r.Put("", UpdateDocs)
 }
 
 // @Summary Get Doc By Id
@@ -109,27 +108,21 @@ func DeleteDocs(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusNoContent)
 }
 
-//UpdateDocById
-//@Summary Update key,Use "HSET"
-//@Description Update key,Use "HSET"
+//UpdateDocs
+//@Summary Update docs,Use "HSET"
+//@Description Update docs,Use "HSET"
 //@Produce application/json
 //@Tags doc
-//@Router /docs/{id} [PUT]
-//@Param id path string true "document id"
+//@Router /docs [PUT]
 //@Success 200
-func UpdateDocById(c *fiber.Ctx) error {
-	key := c.Params("id")
-	type UpdateDocPayload struct {
-		Properties map[string]interface{} `json:"properties"`
-	}
-	var payload UpdateDocPayload
-	data := c.Body()
-	err := json.Unmarshal(data, &payload)
-	if err != nil {
+func UpdateDocs(c *fiber.Ctx) error {
+	var docs self.DocumentList
+	body := c.Request().Body()
+	if err := json.Unmarshal(body, &docs); err != nil {
 		return http.Error(c, err)
 	}
-	connPool := search.NewConnPool()
-	err = self.UpdateDocById(context.TODO(), connPool, key, payload.Properties)
+	pool := search.NewConnPool()
+	err := self.UpdateDocs(c.Context(), pool, docs...)
 	if err != nil {
 		return http.Error(c, err)
 	}
