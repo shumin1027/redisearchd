@@ -2,6 +2,8 @@ package redisearch
 
 import (
 	"context"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
+	"go.uber.org/zap"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
@@ -155,17 +157,27 @@ func DeleteDocs(ctx context.Context, connpool redisearch.ConnPool, ids ...string
 	return nil
 }
 
-func UpdateDocById(ctx context.Context, connpool redisearch.ConnPool, key string, values map[string]interface{}) error {
+func UpdateDocs(ctx context.Context, connpool redisearch.ConnPool, docs ...Document) error {
 	conn := connpool.Get()
 	defer conn.Close()
-	args := redis.Args{}
 
-	args = args.Add(key)
-	for k, v := range values {
-		args = args.Add(k)
-		args = args.Add(v)
+	for _, doc := range docs {
+		args := make(redis.Args, 0, 1+len(doc.Properties))
+		args = doc.Serialize(args)
+		err := conn.Send("HSET", args...)
+		if err != nil {
+			return err
+		}
 	}
 
-	_, err := conn.Do("HSET", args...)
+	if err := conn.Flush(); err != nil {
+		return err
+	}
+
+	reply, err := conn.Receive()
+
+	if err != nil {
+		log.Logger().Error("update redis docs error", zap.Error(err), zap.Any("reply", reply))
+	}
 	return err
 }
