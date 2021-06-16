@@ -25,6 +25,21 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/docs": {
+            "put": {
+                "description": "Update docs,Use \"HSET\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Update docs,Use \"HSET\"",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
             "post": {
                 "description": "Create Docs",
                 "produces": [
@@ -87,30 +102,6 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/http.Response"
                         }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update key,Use \"HSET\"",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "doc"
-                ],
-                "summary": "Update key,Use \"HSET\"",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "document id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": ""
                     }
                 }
             },

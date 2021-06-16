@@ -78,7 +78,7 @@ func AddDocs(ctx context.Context, connpool redisearch.ConnPool, docs ...Document
 		args := make(redis.Args, 0, 1+len(doc.Properties))
 		args = doc.Serialize(args)
 
-		if err := conn.Send("HMSET", args...); err != nil {
+		if err := conn.Send("HSET", args...); err != nil {
 			if merr == nil {
 				merr = redisearch.NewMultiError(len(docs))
 			}

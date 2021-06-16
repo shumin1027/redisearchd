@@ -46,6 +46,16 @@ paths:
       summary: Create Docs
       tags:
       - doc
+    put:
+      description: Update docs,Use "HSET"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Update docs,Use "HSET"
+      tags:
+      - doc
   /docs/{id}:
     delete:
       description: Delete One Doc By Id
@@ -75,22 +85,6 @@ paths:
           schema:
             $ref: '#/definitions/http.Response'
       summary: Get Doc By Id
-      tags:
-      - doc
-    put:
-      description: Update key,Use "HSET"
-      parameters:
-      - description: document id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: Update key,Use "HSET"
       tags:
       - doc
   /indexes:

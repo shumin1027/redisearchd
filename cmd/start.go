@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.xtc.home/xtc/redisearchd/conn/search"
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
 )
 
@@ -15,7 +15,7 @@ var startCmd = &cobra.Command{
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
 		raw := conf.String("redis.url")
-		search.InitPool(raw)
+		redis.Init(raw)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		port := conf.Int("http.port")

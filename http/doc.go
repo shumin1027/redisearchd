@@ -1,7 +1,7 @@
 package http
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/conn/search"
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strings"
 
@@ -41,7 +41,7 @@ func (r *DocRouter) Route() {
 func GetDocById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	fields := c.Query("fields")
-	doc, err := self.GetDocById(c.Context(), search.NewConnPool(), id, strings.Split(fields, ",")...)
+	doc, err := self.GetDocById(c.Context(), redis.Pool(), id, strings.Split(fields, ",")...)
 	if err != nil {
 		return http.Error(c, err)
 	}
@@ -61,7 +61,7 @@ func CreateDocs(c *fiber.Ctx) error {
 	if err := json.Unmarshal(body, &docs); err != nil {
 		return http.Error(c, err)
 	}
-	pool := search.NewConnPool()
+	pool := redis.Pool()
 	err := self.AddDocs(c.Context(), pool, docs...)
 	if err != nil {
 		return http.Error(c, err)
@@ -77,7 +77,7 @@ func CreateDocs(c *fiber.Ctx) error {
 // @Success 204 {string} string ""
 func DeleteDocById(c *fiber.Ctx) error {
 	id := c.Params("id")
-	connPool := search.NewConnPool()
+	connPool := redis.Pool()
 	err := self.DeleteDocs(c.Context(), connPool, id)
 	if err != nil {
 		return http.Error(c, err)
@@ -98,7 +98,7 @@ func DeleteDocs(c *fiber.Ctx) error {
 	if err := json.Unmarshal(body, &ids); err != nil {
 		return http.Error(c, err)
 	}
-	connPool := search.NewConnPool()
+	connPool := redis.Pool()
 	err := self.DeleteDocs(c.Context(), connPool, ids...)
 
 	if err != nil {
@@ -121,7 +121,7 @@ func UpdateDocs(c *fiber.Ctx) error {
 	if err := json.Unmarshal(body, &docs); err != nil {
 		return http.Error(c, err)
 	}
-	pool := search.NewConnPool()
+	pool := redis.Pool()
 	err := self.UpdateDocs(c.Context(), pool, docs...)
 	if err != nil {
 		return http.Error(c, err)
