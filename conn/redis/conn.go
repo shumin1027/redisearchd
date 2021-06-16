@@ -3,6 +3,7 @@ package redis
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
+	"runtime"
 	"time"
 )
 
@@ -20,6 +21,8 @@ func Init(url string) *redis.Pool {
 		Dial: func() (redis.Conn, error) {
 			return redis.DialURL(url)
 		},
+		MaxIdle:   10 * runtime.NumCPU(),
+		MaxActive: 1000 * runtime.NumCPU(),
 	}
 	pool.TestOnBorrow = func(c redis.Conn, t time.Time) (err error) {
 		if time.Since(t) > time.Second {
@@ -46,6 +49,10 @@ func DummyClient() *redisearch.Client {
 
 func Pool() *redis.Pool {
 	return pool
+}
+
+func Conn() redis.Conn {
+	return pool.Get()
 }
 
 func Close() error {
