@@ -3,7 +3,7 @@ package utility
 import (
 	"fmt"
 	consul "github.com/hashicorp/consul/api"
-	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/v3/host"
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"time"
 )
