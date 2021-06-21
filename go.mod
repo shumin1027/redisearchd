@@ -10,6 +10,7 @@ require (
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/arsmn/fiber-swagger/v2 v2.11.0
 	github.com/coreos/go-systemd/v22 v22.3.2
+	github.com/dimiro1/banner v1.1.0
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
@@ -27,6 +28,7 @@ require (
 	github.com/klauspost/compress v1.13.1 // indirect
 	github.com/knadh/koanf v1.1.0
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mattn/go-colorable v0.1.8
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

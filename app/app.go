@@ -2,6 +2,9 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/dimiro1/banner"
+	"github.com/mattn/go-colorable"
 	"log"
 )
 
@@ -31,4 +34,20 @@ func BuildInfo() string {
 		log.Panic(err)
 	}
 	return string(j)
+}
+
+const templ = `
+	{{ .AnsiColor.BrightGreen }}{{ .Title "%s" "standard" 0 }}{{ .AnsiColor.BrightCyan }}
+	GOOS: {{ .GOOS }}
+	GOARCH: {{ .GOARCH }}
+	GoVersion: {{ .GoVersion }}
+	Compiler: {{ .Compiler }}
+	NumCPU: {{ .NumCPU }}
+	Now: {{ .Now "Monday, 2 Jan 2006" }}
+	{{ .AnsiColor.Default }}
+	`
+
+func PrintBanner() {
+	banner.InitString(colorable.NewColorableStdout(), true, true, fmt.Sprintf(templ, Name))
+	fmt.Print("\n")
 }

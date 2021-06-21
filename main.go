@@ -16,8 +16,13 @@ limitations under the License.
 package main
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/cmd"
 )
+
+func init() {
+	app.PrintBanner()
+}
 
 func main() {
 	cmd.Execute()
