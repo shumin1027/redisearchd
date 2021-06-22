@@ -163,7 +163,8 @@ github.com/tklauser/go-sysconf
 github.com/tklauser/numcpus
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v1.26.0
+# github.com/valyala/fasthttp v1.27.0
+## explicit
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/reuseport

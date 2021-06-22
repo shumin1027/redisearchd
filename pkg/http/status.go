@@ -1,11 +1,5 @@
 package http
 
-// limits for HTTP statuscodes
-const (
-	statusMessageMin = 100
-	statusMessageMax = 511
-)
-
 // HTTP status codes were copied from net/http.
 // HTTP status codes as registered with IANA.
 // See: https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml

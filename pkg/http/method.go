@@ -26,19 +26,6 @@ func MethodInt(s string) int {
 	}
 }
 
-// HTTP methods slice
-var intMethod = []string{
-	MethodGet,
-	MethodHead,
-	MethodPost,
-	MethodPut,
-	MethodDelete,
-	MethodConnect,
-	MethodOptions,
-	MethodTrace,
-	MethodPatch,
-}
-
 // HTTP methods were copied from net/http.
 // Common HTTP methods.
 // Unless otherwise noted, these are defined in RFC 7231 section 4.3.

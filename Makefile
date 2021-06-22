@@ -11,7 +11,7 @@ BUILD_INFO_IMPORT_PATH=gitlab.xtc.home/xtc/redisearchd/app
 BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPORT_PATH).GitCommit=$(GIT_SHA) -X $(BUILD_INFO_IMPORT_PATH).GitBranch=$(GIT_BRANCH) -X $(BUILD_INFO_IMPORT_PATH).GitTag=$(GIT_CLOSEST_TAG)'
 
 .PHONY: build
-build:clean fmt vet doc
+build:clean fmt vet check doc
 	@echo ">> building code"
 	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
 	strip $(BUILDDIR)/redisearchd
@@ -25,6 +25,11 @@ fmt:
 vet:
 	@echo ">> vetting code"
 	go vet $(PKGS)
+
+.PHONY: check
+check:
+	@echo ">> staticcheck code"
+	staticcheck $(PKGS)
 
 .PHONY: clean
 clean:
