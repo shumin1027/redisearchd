@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+
 	"github.com/gomodule/redigo/redis"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 )

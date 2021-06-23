@@ -1,10 +1,11 @@
 package redis
 
 import (
-	"github.com/RediSearch/redisearch-go/redisearch"
-	"github.com/gomodule/redigo/redis"
 	"runtime"
 	"time"
+
+	"github.com/RediSearch/redisearch-go/redisearch"
+	"github.com/gomodule/redigo/redis"
 )
 
 var (

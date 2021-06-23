@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/coreos/go-systemd/v22/unit"
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 const (
@@ -92,7 +93,6 @@ func InstallBin() {
 }
 
 func InstallUnit() {
-
 	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
 	// 链接到 SystemUnitFilePath 的时候加上前缀 compubiq- 方便后期查找
 	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("compubiq-%s.service", app.Name))

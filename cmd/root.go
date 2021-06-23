@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"log"
+	"os"
+
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/app"
-	"log"
-	"os"
 )
 
 var conf = koanf.New(".")

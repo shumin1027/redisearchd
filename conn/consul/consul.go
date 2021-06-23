@@ -1,8 +1,9 @@
 package consul
 
 import (
-	consulapi "github.com/hashicorp/consul/api"
 	"net/url"
+
+	consulapi "github.com/hashicorp/consul/api"
 )
 
 type Consul struct {

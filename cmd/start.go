@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"gitlab.xtc.home/xtc/redisearchd/http"
@@ -34,5 +35,4 @@ func init() {
 
 	flags.IntP("http.port", "p", 16379, "web listening port")
 	flags.StringP("redis.url", "", "redis://redis.service.consul:6379/0", "redis server url")
-
 }

@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // 统一报文格式

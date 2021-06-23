@@ -3,9 +3,10 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/dimiro1/banner"
 	"github.com/mattn/go-colorable"
-	"log"
 )
 
 const (

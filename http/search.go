@@ -1,13 +1,13 @@
 package http
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"strconv"
 	"strings"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gofiber/fiber/v2"
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/http"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 	self "gitlab.xtc.home/xtc/redisearchd/pkg/redisearch"
 )
@@ -118,7 +118,6 @@ func SearchByGet(c *fiber.Ctx) error {
 			Field:     field,
 			Ascending: ascending,
 		}
-
 	}
 
 	if len(c.Query("language")) > 0 {

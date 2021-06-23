@@ -9,6 +9,7 @@ require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/arsmn/fiber-swagger/v2 v2.11.0
+	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2
 	github.com/dimiro1/banner v1.1.0
 	github.com/fatih/color v1.12.0 // indirect
@@ -18,7 +19,7 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/gofiber/fiber/v2 v2.13.0
 	github.com/gomodule/redigo v2.0.0+incompatible
-	github.com/hashicorp/consul/api v1.8.1
+	github.com/hashicorp/consul/api v1.9.0
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v0.16.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
@@ -26,7 +27,7 @@ require (
 	github.com/iancoleman/strcase v0.1.3
 	github.com/json-iterator/go v1.1.11
 	github.com/klauspost/compress v1.13.1 // indirect
-	github.com/knadh/koanf v1.1.0
+	github.com/knadh/koanf v1.1.1
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mattn/go-isatty v0.0.13 // indirect

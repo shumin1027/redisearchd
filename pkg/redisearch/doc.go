@@ -2,11 +2,11 @@ package redisearch
 
 import (
 	"context"
-	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
-	"go.uber.org/zap"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
+	"go.uber.org/zap"
 )
 
 type Document struct {

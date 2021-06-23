@@ -1,7 +1,6 @@
 package http
 
 import (
-	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	self "gitlab.xtc.home/xtc/redisearchd/app"
+	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
 	_ "gitlab.xtc.home/xtc/redisearchd/docs"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 )
@@ -39,7 +39,6 @@ func init() {
 
 // 注册路由
 func Route(a *fiber.App) *fiber.App {
-
 	// Recover Middleware
 	app.Use(recover.New())
 
@@ -130,7 +129,7 @@ func graceful(app *fiber.App) {
 
 	log.Println("running cleanup tasks...")
 	// Your cleanup tasks go heremak
-	log.Println("closeing redis conn...")
+	log.Println("closing redis conn...")
 	if err := redis.Close(); err != nil {
 		log.Fatal("close redis conn:", err)
 	}

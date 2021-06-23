@@ -2,6 +2,7 @@ package redisearch
 
 import (
 	"context"
+
 	"github.com/RediSearch/redisearch-go/redisearch"
 )
 

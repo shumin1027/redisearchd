@@ -2,14 +2,14 @@ package utility
 
 import (
 	"fmt"
+	"time"
+
 	consul "github.com/hashicorp/consul/api"
 	"github.com/shirou/gopsutil/v3/host"
 	"gitlab.xtc.home/xtc/redisearchd/app"
-	"time"
 )
 
 func Regist(agent *consul.Agent, ip string, port int, tags []string, meta map[string]string) {
-
 	host, _ := host.Info()
 	if tags == nil {
 		tags = []string{}

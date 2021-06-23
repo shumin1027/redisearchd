@@ -31,6 +31,16 @@ check:
 	@echo ">> staticcheck code"
 	staticcheck $(PKGS)
 
+.PHONY: lint
+lint:
+	@echo ">> lint code"
+	golangci-lint run
+
+.PHONY: fix
+fix:
+	@echo ">> fix code"
+	golangci-lint run --fix
+
 .PHONY: clean
 clean:
 	@echo ">> clean build"

@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/app/utility"
 	"gitlab.xtc.home/xtc/redisearchd/conn/consul"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
-	"strings"
 )
 
 // registCmd represents the regist command
@@ -48,5 +49,4 @@ func init() {
 	flags.StringP("consul.url", "u", "http://consul.service.consul:8500", "consul server url")
 	flags.StringSliceP("consul.tags", "t", []string{}, "consul service tags, e.g: --consul.tags=t1,t2 --consul.tags=t3")
 	flags.StringSliceP("consul.meta", "m", []string{}, "consul service meta, e.g: --consul.meta=key:value")
-
 }
