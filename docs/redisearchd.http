@@ -38,7 +38,7 @@ Content-Type: application/json
 GET {{server}}/indexes
 
 ### 查询索引信息
-GET {{server}}/indexes/queues
+GET {{server}}/indexes/test
 
 ### 删除索引
 DELETE {{server}}/indexes/test
@@ -54,7 +54,6 @@ Content-Type: application/json
     {
         "id": "test:0",
         "properties": {
-            "body": "this is body",
             "date": 0,
             "title": "this_is_title"
         }
@@ -62,7 +61,6 @@ Content-Type: application/json
     {
         "id": "test:1",
         "properties": {
-            "body": "this is body",
             "date": 1,
             "title": "this is title"
         }
@@ -70,7 +68,6 @@ Content-Type: application/json
     {
         "id": "test:2",
         "properties": {
-            "body": "this is body",
             "date": 2,
             "title": "this-is-title"
         }
@@ -78,25 +75,15 @@ Content-Type: application/json
     {
         "id": "test:3",
         "properties": {
-            "body": "this is body",
             "date": 3,
-            "title": "t3"
+            "title": "this\\ is\\ title"
         }
     },
     {
         "id": "test:4",
         "properties": {
-            "body": "this is body",
             "date": 4,
-            "title": "t4"
-        }
-    },
-    {
-        "id": "test:5",
-        "properties": {
-            "body": "this is body",
-            "date": 5,
-            "title": "t5"
+            "title": "this\\-is\\-title"
         }
     }
 ]
@@ -122,11 +109,11 @@ Content-Type: application/json
 
 
 ### 查询文档[POST]
-POST {{server}}/search/queues
+POST {{server}}/search/test
 Content-Type: application/json
 
 {
-    "raw": "*",
+    "raw": "@title:this_is_title",
     "paging": {
         "offset": 0,
         "num": 10

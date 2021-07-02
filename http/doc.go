@@ -19,14 +19,15 @@ func NewDocRouter(r fiber.Router) *DocRouter {
 	if ok {
 		return &DocRouter{g}
 	}
+
 	return nil
 }
 
 func (r *DocRouter) Route() {
-	r.Get("/:id", GetDocById)
+	r.Get("/:id", GetDocByID)
 	r.Post("", CreateDocs)
 	r.Delete("", DeleteDocs)
-	r.Delete("/:id", DeleteDocById)
+	r.Delete("/:id", DeleteDocByID)
 
 	r.Put("", UpdateDocs)
 }
@@ -38,13 +39,14 @@ func (r *DocRouter) Route() {
 // @Router /docs/{id} [GET]
 // @Param id path string true "doc id"
 // @Success 200 {object} http.Response
-func GetDocById(c *fiber.Ctx) error {
+func GetDocByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	fields := c.Query("fields")
 	doc, err := self.GetDocById(c.Context(), redis.Pool(), id, strings.Split(fields, ",")...)
 	if err != nil {
 		return http.Error(c, err)
 	}
+
 	return http.Success(c, doc)
 }
 
@@ -75,7 +77,7 @@ func CreateDocs(c *fiber.Ctx) error {
 // @Tags doc
 // @Router /docs/{id} [DELETE]
 // @Success 204 {string} string ""
-func DeleteDocById(c *fiber.Ctx) error {
+func DeleteDocByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	connPool := redis.Pool()
 	err := self.DeleteDocs(c.Context(), connPool, id)

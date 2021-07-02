@@ -109,21 +109,21 @@ linters:
     - errcheck
     - errorlint
     - exhaustive
-    - exhaustivestruct
+    # - exhaustivestruct
     - exportloopref
     - forbidigo
     - forcetypeassert
     - funlen
     - gci
     # - godot
-    - gochecknoglobals
+    # - gochecknoglobals
     - gochecknoinits
     - gocognit
     - goconst
     - gocritic
     - gocyclo
     - godox
-    - goerr113
+    # - goerr113
     - gofmt
     # - gofumpt
     - goheader
@@ -169,7 +169,7 @@ linters:
     - wastedassign
     - whitespace
     - wrapcheck
-    - wsl
+#    - wsl
 
 # all available settings of specific linters
 linters-settings:
@@ -188,3 +188,14 @@ linters-settings:
     go: "1.16"
     # https://staticcheck.io/docs/options#checks
     checks: [ "all" ]
+
+  funlen:
+    lines: 100
+    statements: 50
+
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+    line-length: 256
+    # tab width in spaces. Default to 1.
+    tab-width: 1

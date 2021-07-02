@@ -95,7 +95,7 @@ func InstallBin() {
 func InstallUnit() {
 	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
 	// 链接到 SystemUnitFilePath 的时候加上前缀 compubiq- 方便后期查找
-	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("compubiq-%s.service", app.Name))
+	unitfileLink := filepath.Join(SystemUnitFilePath, fmt.Sprintf("compubiq-%s.service", app.Name))
 
 	// rm old unitfile
 	if exists, _ := utils.Exists(unitfile); exists {
@@ -104,8 +104,8 @@ func InstallUnit() {
 			log.StdLogger().Panic(err)
 		}
 	}
-	if exists, _ := utils.Exists(unitfile_link); exists {
-		err := os.Remove(unitfile_link)
+	if exists, _ := utils.Exists(unitfileLink); exists {
+		err := os.Remove(unitfileLink)
 		if err != nil {
 			log.StdLogger().Panic(err)
 		}
@@ -122,6 +122,7 @@ func InstallUnit() {
 	opts = append(opts, unit.NewUnitOption("Unit", "Documentation", app.Repository))
 	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)+" start"))
 	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service compubiq-%s.service", app.Name, app.Name)))
+
 	r := unit.Serialize(opts)
 
 	var f *os.File
@@ -153,7 +154,7 @@ func InstallUnit() {
 	}(w)
 
 	// link unitfile to /etc/systemd/system/
-	if err := os.Link(unitfile, unitfile_link); err != nil {
+	if err := os.Link(unitfile, unitfileLink); err != nil {
 		log.StdLogger().Panic(err)
 	}
 }

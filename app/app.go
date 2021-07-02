@@ -16,6 +16,7 @@ const (
 	Repository  = "http://gitlab.xtc.home/xtc/redisearchd.git"
 )
 
+//nolint:gochecknoglobals
 var (
 	GitTag    string
 	GitCommit string
@@ -31,10 +32,14 @@ func BuildInfo() string {
 	info["GitBranch"] = GitBranch
 	info["GitTag"] = GitTag
 	j, err := json.Marshal(info)
+
 	if err != nil {
 		log.Panic(err)
 	}
-	return string(j)
+
+	str := string(j)
+
+	return str
 }
 
 const templ = `
@@ -50,5 +55,5 @@ const templ = `
 
 func PrintBanner() {
 	banner.InitString(colorable.NewColorableStdout(), true, true, fmt.Sprintf(templ, Name))
-	fmt.Print("\n")
+	fmt.Print("\n") //nolint:forbidigo
 }

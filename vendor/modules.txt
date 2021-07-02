@@ -20,7 +20,7 @@ github.com/andybalholm/brotli
 # github.com/armon/go-metrics v0.3.9
 ## explicit
 github.com/armon/go-metrics
-# github.com/arsmn/fiber-swagger/v2 v2.11.0
+# github.com/arsmn/fiber-swagger/v2 v2.13.0
 ## explicit
 github.com/arsmn/fiber-swagger/v2
 # github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
@@ -53,7 +53,7 @@ github.com/go-openapi/spec
 github.com/go-openapi/swag
 # github.com/godbus/dbus/v5 v5.0.4
 github.com/godbus/dbus/v5
-# github.com/gofiber/fiber/v2 v2.13.0
+# github.com/gofiber/fiber/v2 v2.14.0
 ## explicit
 github.com/gofiber/fiber/v2
 github.com/gofiber/fiber/v2/internal/bytebufferpool
@@ -72,7 +72,7 @@ github.com/gofiber/fiber/v2/utils
 ## explicit
 github.com/gomodule/redigo/internal
 github.com/gomodule/redigo/redis
-# github.com/hashicorp/consul/api v1.9.0
+# github.com/hashicorp/consul/api v1.9.1
 ## explicit
 github.com/hashicorp/consul/api
 # github.com/hashicorp/go-cleanhttp v0.5.2
@@ -81,7 +81,7 @@ github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-hclog v0.16.1
 ## explicit
 github.com/hashicorp/go-hclog
-# github.com/hashicorp/go-immutable-radix v1.3.0
+# github.com/hashicorp/go-immutable-radix v1.3.1
 ## explicit
 github.com/hashicorp/go-immutable-radix
 # github.com/hashicorp/go-rootcerts v1.0.2
@@ -135,11 +135,9 @@ github.com/mitchellh/reflectwalk
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
-# github.com/pelletier/go-toml v1.9.0
-## explicit
 # github.com/pkg/errors v0.9.1
 ## explicit
-# github.com/shirou/gopsutil/v3 v3.21.5
+# github.com/shirou/gopsutil/v3 v3.21.6
 ## explicit
 github.com/shirou/gopsutil/v3/cpu
 github.com/shirou/gopsutil/v3/host
@@ -147,7 +145,7 @@ github.com/shirou/gopsutil/v3/internal/common
 github.com/shirou/gopsutil/v3/mem
 github.com/shirou/gopsutil/v3/net
 github.com/shirou/gopsutil/v3/process
-# github.com/spf13/cobra v1.1.3
+# github.com/spf13/cobra v1.2.0
 ## explicit
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
@@ -158,13 +156,12 @@ github.com/swaggo/files
 ## explicit
 github.com/swaggo/swag
 # github.com/tklauser/go-sysconf v0.3.6
-## explicit
 github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.2.2
 github.com/tklauser/numcpus
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v1.27.0
+# github.com/valyala/fasthttp v1.28.0
 ## explicit
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
@@ -178,7 +175,7 @@ go.uber.org/atomic
 # go.uber.org/multierr v1.7.0
 ## explicit
 go.uber.org/multierr
-# go.uber.org/zap v1.17.0
+# go.uber.org/zap v1.18.1
 ## explicit
 go.uber.org/zap
 go.uber.org/zap/buffer
@@ -191,7 +188,7 @@ go.uber.org/zap/zapcore
 golang.org/x/net/idna
 golang.org/x/net/webdav
 golang.org/x/net/webdav/internal/xml
-# golang.org/x/sys v0.0.0-20210616094352-59db8d763f22
+# golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
 ## explicit
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
@@ -203,7 +200,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.1.3
+# golang.org/x/tools v0.1.4
 ## explicit
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/buildutil

@@ -14,7 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	self "gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
-	_ "gitlab.xtc.home/xtc/redisearchd/docs"
+	_ "gitlab.xtc.home/xtc/redisearchd/docs" //nolint:revive
 	"gitlab.xtc.home/xtc/redisearchd/pkg/json"
 )
 
