@@ -34,7 +34,7 @@ import (
 )
 
 // Version of current fiber package
-const Version = "2.14.0"
+const Version = "2.18.0"
 
 // Handler defines a function to serve HTTP requests.
 type Handler = func(*Ctx) error
@@ -147,7 +147,7 @@ type Config struct {
 	// When set to true, converts all encoded characters in the route back
 	// before setting the path for the context, so that the routing,
 	// the returning of the current url from the context `ctx.Path()`
-	// and the paramters `ctx.Params(%key%)` with decoded characters will work
+	// and the parameters `ctx.Params(%key%)` with decoded characters will work
 	//
 	// Default: false
 	UnescapePath bool `json:"unescape_path"`
@@ -265,6 +265,24 @@ type Config struct {
 	// Default: false
 	DisableStartupMessage bool `json:"disable_startup_message"`
 
+	// This function allows to setup app name for the app
+	//
+	// Default: nil
+	AppName string `json:"app_name"`
+
+	// StreamRequestBody enables request body streaming,
+	// and calls the handler sooner when given body is
+	// larger then the current limit.
+	StreamRequestBody bool
+
+	// Will not pre parse Multipart Form data if set to true.
+	//
+	// This option is useful for servers that desire to treat
+	// multipart form data as a binary blob, or choose when to parse the data.
+	//
+	// Server pre parses multipart form data by default.
+	DisablePreParseMultipartForm bool
+
 	// Aggressively reduces memory usage at the cost of higher CPU usage
 	// if set to true.
 	//
@@ -289,6 +307,13 @@ type Config struct {
 	// Allowing for flexibility in using another json library for encoding
 	// Default: json.Marshal
 	JSONEncoder utils.JSONMarshal `json:"-"`
+
+	// When set by an external client of Fiber it will use the provided implementation of a
+	// JSONUnmarshal
+	//
+	// Allowing for flexibility in using another json library for encoding
+	// Default: json.Unmarshal
+	JSONDecoder utils.JSONUnmarshal `json:"-"`
 
 	// Known networks are "tcp", "tcp4" (IPv4-only), "tcp6" (IPv6-only)
 	// WARNING: When prefork is set to true, only "tcp4" and "tcp6" can be chose.
@@ -402,8 +427,8 @@ func New(config ...Config) *App {
 		},
 		// Create config
 		config:    Config{},
-		getBytes:  utils.GetBytes,
-		getString: utils.GetString,
+		getBytes:  utils.UnsafeBytes,
+		getString: utils.UnsafeString,
 	}
 	// Override config if provided
 	if len(config) > 0 {
@@ -440,6 +465,9 @@ func New(config ...Config) *App {
 	}
 	if app.config.JSONEncoder == nil {
 		app.config.JSONEncoder = json.Marshal
+	}
+	if app.config.JSONDecoder == nil {
+		app.config.JSONDecoder = json.Unmarshal
 	}
 	if app.config.Network == "" {
 		app.config.Network = NetworkTCP4
@@ -844,6 +872,8 @@ func (app *App) init() *App {
 	app.server.WriteBufferSize = app.config.WriteBufferSize
 	app.server.GetOnly = app.config.GETOnly
 	app.server.ReduceMemoryUsage = app.config.ReduceMemoryUsage
+	app.server.StreamRequestBody = app.config.StreamRequestBody
+	app.server.DisablePreParseMultipartForm = app.config.DisablePreParseMultipartForm
 
 	// unlock application
 	app.mutex.Unlock()
@@ -942,9 +972,11 @@ func (app *App) startupMessage(addr string, tls bool, pids string) {
 		procs = "1"
 	}
 
-	mainLogo := cBlack +
-		" ┌───────────────────────────────────────────────────┐\n" +
-		" │ " + centerValue(" Fiber v"+Version, 49) + " │\n"
+	mainLogo := cBlack + " ┌───────────────────────────────────────────────────┐\n"
+	if app.config.AppName != "" {
+		mainLogo += " │ " + centerValue(app.config.AppName, 49) + " │\n"
+	}
+	mainLogo += " │ " + centerValue(" Fiber v"+Version, 49) + " │\n"
 
 	if host == "0.0.0.0" {
 		mainLogo +=
