@@ -102,6 +102,39 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Update doc field,Use \"HMSET\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "doc"
+                ],
+                "summary": "Update doc field,Use \"HMSET\"",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "doc id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "doc id",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.UpdateDocFieldsPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
             }
         },
         "/indexes": {
@@ -493,6 +526,23 @@
                 "success": {
                     "description": "是否调用成功：true表示调用成功，false表示调用失败",
                     "type": "boolean"
+                }
+            }
+        },
+        "http.UpdateDocFieldsPayload": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }

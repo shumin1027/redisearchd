@@ -146,7 +146,9 @@ func UpdateDocs(c *fiber.Ctx) error {
 //@Description Update doc field,Use "HMSET"
 //@Produce application/json
 //@Tags doc
-//@Router /docs/{od} [PATCH]
+//@Router /docs/{id} [PATCH]
+//@Param id path string true "doc id"
+//@Param payload body UpdateDocFieldsPayload true "doc id"
 //@Success 200
 func UpdateDocFields(c *fiber.Ctx) error {
 	var updatePayload UpdateDocFieldsPayload
