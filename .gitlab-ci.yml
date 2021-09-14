@@ -29,29 +29,29 @@ build:centos_amd64:
     expire_in: 1 week
 
 # arm64
-build:ubuntu_arm64:
-  stage: build
-  tags:
-    - arm64
-    - ubuntu
-  script:
-    - make build
-  artifacts:
-    name: "redisearchd_ubuntu_arm64"
-    paths:
-      - bin
-    expire_in: 1 week
-
-build:centos_arm64:
-  stage: build
-  tags:
-    - arm64
-    - centos
-  script:
-    - make build
-  artifacts:
-    name: "redisearchd_centos_arm64"
-    paths:
-      - bin
-    expire_in: 1 week
+# build:ubuntu_arm64:
+#   stage: build
+#   tags:
+#     - arm64
+#     - ubuntu
+#   script:
+#     - make build
+#   artifacts:
+#     name: "redisearchd_ubuntu_arm64"
+#     paths:
+#       - bin
+#     expire_in: 1 week
+# 
+# build:centos_arm64:
+#   stage: build
+#   tags:
+#     - arm64
+#     - centos
+#   script:
+#     - make build
+#   artifacts:
+#     name: "redisearchd_centos_arm64"
+#     paths:
+#       - bin
+#     expire_in: 1 week
 
