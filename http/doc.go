@@ -26,12 +26,19 @@ func NewDocRouter(r fiber.Router) *DocRouter {
 func (r *DocRouter) Route() {
 	r.Get("/:id", GetDocByID)
 	r.Post("", CreateDocs)
+	r.Patch("/:id", UpdateDocFields)
 	r.Delete("", DeleteDocs)
 	r.Delete("/:id", DeleteDocByID)
 
 	r.Put("", UpdateDocs)
 }
 
+type UpdateDocFieldsPayload struct {
+	Fields []string `json:"fields"`
+	Values []string `json:"values"`
+}
+
+// GetDocByID
 // @Summary Get Doc By Id
 // @Description Get Doc By Id
 // @Produce application/json
@@ -50,6 +57,7 @@ func GetDocByID(c *fiber.Ctx) error {
 	return http.Success(c, doc)
 }
 
+// CreateDocs
 // @Summary Create Docs
 // @Description Create Docs
 // @Produce application/json
@@ -71,6 +79,7 @@ func CreateDocs(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusCreated)
 }
 
+// DeleteDocByID
 // @Summary Delete One Doc By Id
 // @Description Delete One Doc By Id
 // @Produce application/json
@@ -87,6 +96,7 @@ func DeleteDocByID(c *fiber.Ctx) error {
 	return c.SendStatus(http.StatusNoContent)
 }
 
+// DeleteDocs
 // @Summary Batch Delete Docs By Ids
 // @Description Batch Delete Docs By Ids
 // @Produce application/json
@@ -125,6 +135,28 @@ func UpdateDocs(c *fiber.Ctx) error {
 	}
 	pool := redis.Pool()
 	err := self.UpdateDocs(c.Context(), pool, docs...)
+	if err != nil {
+		return http.Error(c, err)
+	}
+	return http.Success(c, fiber.Map{})
+}
+
+//UpdateDocFields
+//@Summary Update doc field,Use "HMSET"
+//@Description Update doc field,Use "HMSET"
+//@Produce application/json
+//@Tags doc
+//@Router /docs/{od} [PATCH]
+//@Success 200
+func UpdateDocFields(c *fiber.Ctx) error {
+	var updatePayload UpdateDocFieldsPayload
+	body := c.Request().Body()
+	if err := json.Unmarshal(body, &updatePayload); err != nil {
+		return http.Error(c, err)
+	}
+	id := c.Params("id")
+	connPool := redis.Pool()
+	err := self.UpdateDocFields(c.Context(), connPool, id, updatePayload.Fields, updatePayload.Values)
 	if err != nil {
 		return http.Error(c, err)
 	}
