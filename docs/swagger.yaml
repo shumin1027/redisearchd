@@ -18,6 +18,17 @@ definitions:
         description: 是否调用成功：true表示调用成功，false表示调用失败
         type: boolean
     type: object
+  http.UpdateDocFieldsPayload:
+    properties:
+      fields:
+        items:
+          type: string
+        type: array
+      values:
+        items:
+          type: string
+        type: array
+    type: object
 info:
   contact: {}
 paths:
@@ -85,6 +96,28 @@ paths:
           schema:
             $ref: '#/definitions/http.Response'
       summary: Get Doc By Id
+      tags:
+      - doc
+    patch:
+      description: Update doc field,Use "HMSET"
+      parameters:
+      - description: doc id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: doc id
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateDocFieldsPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Update doc field,Use "HMSET"
       tags:
       - doc
   /indexes:
