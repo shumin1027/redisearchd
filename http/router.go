@@ -27,7 +27,7 @@ type Router interface {
 
 func init() {
 	cfg := fiber.Config{
-		Prefork:     true,
+		Prefork:     false,
 		JSONEncoder: json.Marshal,
 		ReadTimeout: 10 * time.Second,
 	}

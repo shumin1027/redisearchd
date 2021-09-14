@@ -2,6 +2,7 @@ package redisearch
 
 import (
 	"context"
+	"errors"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
@@ -168,6 +169,34 @@ func UpdateDocs(ctx context.Context, connpool redisearch.ConnPool, docs ...Docum
 		if err != nil {
 			return err
 		}
+	}
+
+	if err := conn.Flush(); err != nil {
+		return err
+	}
+
+	reply, err := conn.Receive()
+
+	if err != nil {
+		log.Logger().Error("update redis docs error", zap.Error(err), zap.Any("reply", reply))
+	}
+	return err
+}
+
+func UpdateDocFields(ctx context.Context, connpool redisearch.ConnPool, id string, keys []string, values []string) error {
+	conn := connpool.Get()
+	defer conn.Close()
+	if len(keys) != len(values) {
+		return errors.New("number of 'key' and 'value' is inconsistent")
+	}
+	args := redis.Args{id}
+	for i, key := range keys {
+		args = args.Add(key)
+		args = args.Add(values[i])
+	}
+	err := conn.Send("HMSET", args...)
+	if err != nil {
+		return err
 	}
 
 	if err := conn.Flush(); err != nil {
