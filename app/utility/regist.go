@@ -34,7 +34,7 @@ func Regist(agent *consul.Agent, ip string, port int, tags []string, meta map[st
 	// deregister := time.Duration(1) * time.Minute
 
 	service := &consul.AgentServiceRegistration{
-		ID:      app.Name + "@" + hostInfo.HostID, // 服务节点UUID
+		ID:      app.Name + "@" + ip, // 服务节点UUID
 		Name:    app.Name,                         // 服务名称 此处根据prometheus.yml配置进行约定
 		Address: ip,                               // 服务 IP
 		Port:    port,                             // 服务端口
