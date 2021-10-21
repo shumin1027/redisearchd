@@ -2,6 +2,7 @@ package utility
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	consul "github.com/hashicorp/consul/api"
@@ -49,6 +50,6 @@ func Regist(agent *consul.Agent, ip string, port int, tags []string, meta map[st
 	}
 
 	if err := agent.ServiceRegister(service); err != nil {
-		panic(err)
+		log.Fatalln("service register failed: ", err)
 	}
 }

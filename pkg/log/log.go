@@ -1,24 +1,21 @@
 package log
 
 import (
-	"log"
-
 	"go.uber.org/zap"
+	"log"
 )
 
 var zapLogger *zap.Logger
 var stdLogger *log.Logger
 
 func init() {
-	// 默认启用开发环境配置
-	conf := DevLogConf()
-	zapLogger = NewLogger(conf)
-	stdLogger = zap.NewStdLog(zapLogger)
+	conf := Conf
+	Init(conf)
 }
 
 func Init(conf *LogConf) {
 	zapLogger = NewLogger(conf)
-	Logger().Info("zap logger init success")
+	stdLogger = zap.NewStdLog(zapLogger)
 }
 
 func Logger() *zap.Logger {

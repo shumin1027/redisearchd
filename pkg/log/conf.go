@@ -5,8 +5,9 @@ import (
 	"path/filepath"
 )
 
-const logpath = "/var/log/"
+const logPath = "/usr/local/compubiq/var/log/"
 
+// LogConf
 /** 日志配置
  * Level 		日志级别 debug/info/warn/error/dpanic/panic/fatal
  * Encoding 	日志编码方式 json/console
@@ -24,8 +25,8 @@ type LogConf struct {
 	LogRotateConf
 }
 
-/**
-日志轮转配置
+// LogRotateConf
+/** 日志轮转配置
  * LogFile		日志文件路径
  * MaxSize 		每个日志文件保存的最大尺寸 单位：M
  * MaxBackups 	日志文件最多保存多少个备份
@@ -64,7 +65,7 @@ type LogRotateConf struct {
 	Compress bool `json:"compress" yaml:"compress"`
 }
 
-// 开发环境默认配置
+// DevLogConf 开发环境默认配置
 func DevLogConf() *LogConf {
 	conf := &LogConf{
 		Level:      "debug",
@@ -76,13 +77,13 @@ func DevLogConf() *LogConf {
 	return conf
 }
 
-// 生产环境默认配置
+// ProcLogConf 生产环境默认配置
 func ProcLogConf() *LogConf {
 	rotate := LogRotateConf{
 		Filename: func() string {
 			exe, _ := os.Executable()
 			_, app := filepath.Split(exe)
-			logfile := filepath.Join(logpath, app, app+".log")
+			logfile := filepath.Join(logPath, app, app+".log")
 			return logfile
 		}(),
 		MaxSize:    128,
@@ -100,7 +101,7 @@ func ProcLogConf() *LogConf {
 		Level:         "info",
 		Encoding:      "json",
 		WithCaller:    false,
-		Stdout:        false,
+		Stdout:        true,
 		Logrotate:     true,
 		LogRotateConf: rotate,
 	}
