@@ -35,7 +35,7 @@ User=root
 Group=root
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=clustermom.target
 `
 
 func PreInstall() {
