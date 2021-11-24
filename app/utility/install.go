@@ -16,10 +16,10 @@ import (
 )
 
 const (
-	BinPath      = "/usr/local/compubiq/bin/"                // --> /bin/
-	VarPath      = "/usr/local/compubiq/var/"                // --> /var/
-	EtcPath      = "/usr/local/compubiq/etc/"                // --> /etc/
-	UnitFilePath = "/usr/local/compubiq/etc/systemd/system/" // --> /usr/lib/systemd/system/
+	BinPath      = "/usr/local/clustermom/bin/"                // --> /bin/
+	VarPath      = "/usr/local/clustermom/var/"                // --> /var/
+	EtcPath      = "/usr/local/clustermom/etc/"                // --> /etc/
+	UnitFilePath = "/usr/local/clustermom/etc/systemd/system/" // --> /usr/lib/systemd/system/
 
 	SystemUnitFilePath = "/etc/systemd/system/"
 )
@@ -59,7 +59,7 @@ func Install() {
 func UnInstall() {
 	binfile := filepath.Join(BinPath, app.Name)
 	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
-	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("compubiq-%s.service", app.Name))
+	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
 
 	log.Info("uninstalling bin")
 	os.Remove(binfile)
@@ -94,8 +94,8 @@ func InstallBin() {
 
 func InstallUnit() {
 	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
-	// 链接到 SystemUnitFilePath 的时候加上前缀 compubiq- 方便后期查找
-	unitfileLink := filepath.Join(SystemUnitFilePath, fmt.Sprintf("compubiq-%s.service", app.Name))
+	// 链接到 SystemUnitFilePath 的时候加上前缀 clustermom- 方便后期查找
+	unitfileLink := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
 
 	// rm old unitfile
 	if exists, _ := utils.Exists(unitfile); exists {
@@ -121,7 +121,7 @@ func InstallUnit() {
 	opts = append(opts, unit.NewUnitOption("Unit", "Description", app.Description))
 	opts = append(opts, unit.NewUnitOption("Unit", "Documentation", app.Repository))
 	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)+" start"))
-	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service compubiq-%s.service", app.Name, app.Name)))
+	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service clustermom-%s.service", app.Name, app.Name)))
 
 	r := unit.Serialize(opts)
 
