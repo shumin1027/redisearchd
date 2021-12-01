@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-const logPath = "/usr/local/compubiq/var/log/"
+const logPath = "/usr/local/clustermom/var/log/"
 
 // LogConf
 /** 日志配置
