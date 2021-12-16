@@ -52,14 +52,12 @@ func Route(a *fiber.App) *fiber.App {
 
 	// Duration Middleware
 	a.Use(func(c *fiber.Ctx) error {
-		var start, stop time.Time
-		start = time.Now()
+		start := time.Now()
 		if chainErr := c.Next(); chainErr != nil {
 			return chainErr
 		}
-		stop = time.Now()
-		duration := stop.Sub(start).Round(time.Nanosecond)
-		c.Set("X-Request-Duration", duration.String())
+		duration := time.Since(start)
+		c.Set("X-Request-Time", duration.String())
 		return nil
 	})
 

@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2/internal/bytebufferpool"
-	"github.com/gofiber/fiber/v2/internal/encoding/json"
+	"github.com/gofiber/fiber/v2/internal/go-json"
 	"github.com/gofiber/fiber/v2/internal/schema"
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/valyala/fasthttp"
@@ -33,6 +33,9 @@ import (
 const maxParams = 30
 
 const queryTag = "query"
+
+// userContextKey define the key name for storing context.Context in *fasthttp.RequestCtx
+const userContextKey = "__local_user_context__"
 
 // Ctx represents the Context which hold the HTTP request and response.
 // It has methods for the request query string, parameters, body, HTTP headers and so on.
@@ -53,7 +56,6 @@ type Ctx struct {
 	values              [maxParams]string    // Route parameter values
 	fasthttp            *fasthttp.RequestCtx // Reference to *fasthttp.RequestCtx
 	matched             bool                 // Non use route matched
-	userContext         context.Context
 }
 
 // Range data for c.Range
@@ -82,6 +84,21 @@ type Cookie struct {
 type Views interface {
 	Load() error
 	Render(io.Writer, string, interface{}, ...string) error
+}
+
+// ParserType require two element, type and converter for register.
+// Use ParserType with BodyParser for parsing custom type in form data.
+type ParserType struct {
+	Customtype interface{}
+	Converter  func(string) reflect.Value
+}
+
+// ParserConfig form decoder config for SetParserDecoder
+type ParserConfig struct {
+	IgnoreUnknownKeys bool
+	SetAliasTag       string
+	ParserType        []ParserType
+	ZeroEmpty         bool
 }
 
 // AcquireCtx retrieves a new Ctx from the pool.
@@ -270,11 +287,31 @@ func (c *Ctx) Body() []byte {
 
 // decoderPool helps to improve BodyParser's and QueryParser's performance
 var decoderPool = &sync.Pool{New: func() interface{} {
-	var decoder = schema.NewDecoder()
-	decoder.ZeroEmpty(true)
-	decoder.IgnoreUnknownKeys(true)
-	return decoder
+	return decoderBuilder(ParserConfig{
+		IgnoreUnknownKeys: true,
+		ZeroEmpty:         true,
+	})
 }}
+
+// SetParserDecoder allow globally change the option of form decoder, update decoderPool
+func SetParserDecoder(parserConfig ParserConfig) {
+	decoderPool = &sync.Pool{New: func() interface{} {
+		return decoderBuilder(parserConfig)
+	}}
+}
+
+func decoderBuilder(parserConfig ParserConfig) interface{} {
+	var decoder = schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(parserConfig.IgnoreUnknownKeys)
+	if parserConfig.SetAliasTag != "" {
+		decoder.SetAliasTag(parserConfig.SetAliasTag)
+	}
+	for _, v := range parserConfig.ParserType {
+		decoder.RegisterConverter(reflect.ValueOf(v.Customtype).Interface(), v.Converter)
+	}
+	decoder.ZeroEmpty(parserConfig.ZeroEmpty)
+	return decoder
+}
 
 // BodyParser binds the request body to a struct.
 // It supports decoding the following content types based on the Content-Type header:
@@ -342,15 +379,18 @@ func (c *Ctx) Context() *fasthttp.RequestCtx {
 // UserContext returns a context implementation that was set by
 // user earlier or returns a non-nil, empty context,if it was not set earlier.
 func (c *Ctx) UserContext() context.Context {
-	if c.userContext == nil {
-		c.userContext = context.Background()
+	ctx, ok := c.fasthttp.UserValue(userContextKey).(context.Context)
+	if !ok {
+		ctx = context.Background()
+		c.SetUserContext(ctx)
 	}
-	return c.userContext
+
+	return ctx
 }
 
 // SetUserContext sets a context implementation by user.
 func (c *Ctx) SetUserContext(ctx context.Context) {
-	c.userContext = ctx
+	c.fasthttp.SetUserValue(userContextKey, ctx)
 }
 
 // Cookie sets a cookie by passing a cookie struct.
@@ -1069,6 +1109,9 @@ func (c *Ctx) SendFile(file string, compress ...bool) error {
 			file += "/"
 		}
 	}
+	// Restore the original requested URL
+	originalURL := c.OriginalURL()
+	defer c.fasthttp.Request.SetRequestURI(originalURL)
 	// Set new URI for fileHandler
 	c.fasthttp.Request.SetRequestURI(file)
 	// Save status code

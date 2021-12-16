@@ -32,7 +32,7 @@ type LogConf struct {
  * MaxBackups 	日志文件最多保存多少个备份
  * MaxAge 		文件最多保存多少天
  * Compress 	是否压缩
-*/
+ */
 type LogRotateConf struct {
 	// Filename is the file to write logs to.  Backup log files will be retained
 	// in the same directory.  It uses <processname>-lumberjack.log in
