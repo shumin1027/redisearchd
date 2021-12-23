@@ -13,8 +13,9 @@ BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPOR
 .PHONY: build
 build:clean fmt vet check doc
 	@echo ">> building code"
-	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
-	strip $(BUILDDIR)/redisearchd
+	@go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
+	@strip $(BUILDDIR)/redisearchd
+	@upx $(BUILDDIR)/redisearchd
 
 .PHONY: fmt
 fmt:

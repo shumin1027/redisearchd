@@ -11,10 +11,13 @@ var installCmd = &cobra.Command{
 	Short: "Install as a systemd unit",
 	Long:  `Install as a systemd unit`,
 	Run: func(cmd *cobra.Command, args []string) {
-		utility.Install()
+		top := conf.String("install.top")
+		utility.Install(top)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(installCmd)
+	flags := installCmd.PersistentFlags()
+	flags.StringP("install.top", "", "/usr/local/clustermom", "install path")
 }

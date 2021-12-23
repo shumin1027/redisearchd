@@ -4,23 +4,24 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/coreos/go-systemd/v22/unit"
+	"github.com/valyala/fasttemplate"
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
-const (
-	BinPath      = "/usr/local/clustermom/bin/"                // --> /bin/
-	VarPath      = "/usr/local/clustermom/var/"                // --> /var/
-	EtcPath      = "/usr/local/clustermom/etc/"                // --> /etc/
-	UnitFilePath = "/usr/local/clustermom/etc/systemd/system/" // --> /usr/lib/systemd/system/
-
+var (
+	Top                = "/usr/local/clustermom"
+	BinPath            = "{{TOP}}/bin/"
+	VarPath            = "{{TOP}}/var/"
+	VarLibPath         = "{{TOP}}/var/lib/"
+	EtcPath            = "{{TOP}}/etc/"
+	UnitFilePath       = "{{TOP}}/etc/systemd/system/"
 	SystemUnitFilePath = "/etc/systemd/system/"
 )
 
@@ -38,40 +39,43 @@ Group=root
 WantedBy=clustermom.target
 `
 
-func PreInstall() {
+func preInstall() {
+	BinPath = filepath.Clean(fasttemplate.New(BinPath, "{{", "}}").ExecuteString(map[string]interface{}{
+		"TOP": Top,
+	}))
+	VarPath = filepath.Clean(fasttemplate.New(VarPath, "{{", "}}").ExecuteString(map[string]interface{}{
+		"TOP": Top,
+	}))
+	EtcPath = filepath.Clean(fasttemplate.New(EtcPath, "{{", "}}").ExecuteString(map[string]interface{}{
+		"TOP": Top,
+	}))
+	VarLibPath = filepath.Clean(fasttemplate.New(VarLibPath, "{{", "}}").ExecuteString(map[string]interface{}{
+		"TOP": Top,
+	}))
+	UnitFilePath = filepath.Clean(fasttemplate.New(UnitFilePath, "{{", "}}").ExecuteString(map[string]interface{}{
+		"TOP": Top,
+	}))
+
 	utils.MakeDir(BinPath)
 	utils.MakeDir(VarPath)
 	utils.MakeDir(EtcPath)
+	utils.MakeDir(VarLibPath)
 	utils.MakeDir(UnitFilePath)
 }
 
-func Install() {
-	PreInstall()
-	log.Info("installing bin")
-	InstallBin()
-	log.Info("installing systemd unit")
-	InstallUnit()
-	log.Info("reloading systemd-daemon")
+func Install(top string) {
+	Top = top
+	preInstall()
+	log.Logger().Info("installing bin")
+	installBin()
+	log.Logger().Info("installing systemd unit")
+	installUnit()
+	log.Logger().Info("reloading systemd-daemon")
 	ReloadSystemdDaemon()
-	log.Info("install complete")
+	log.Logger().Info("install complete")
 }
 
-func UnInstall() {
-	binfile := filepath.Join(BinPath, app.Name)
-	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
-	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
-
-	log.Info("uninstalling bin")
-	os.Remove(binfile)
-	log.Info("uninstalling systemd unit")
-	os.Remove(unitfile)
-	os.Remove(unitfile_link)
-	log.Info("reloading systemd-daemon")
-	ReloadSystemdDaemon()
-	log.Info("uninstall complete")
-}
-
-func InstallBin() {
+func installBin() {
 	binfile := filepath.Join(BinPath, app.Name)
 	// rm old binfile
 	if exists, _ := utils.Exists(binfile); exists {
@@ -92,10 +96,10 @@ func InstallBin() {
 	}
 }
 
-func InstallUnit() {
+func installUnit() {
 	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
-	// 链接到 SystemUnitFilePath 的时候加上前缀 clustermom- 方便后期查找
-	unitfileLink := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
+	// 链接到 /usr/lib/systemd/system/ 的时候加上前缀clustermom- 方便后期查找
+	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
 
 	// rm old unitfile
 	if exists, _ := utils.Exists(unitfile); exists {
@@ -104,8 +108,8 @@ func InstallUnit() {
 			log.StdLogger().Panic(err)
 		}
 	}
-	if exists, _ := utils.Exists(unitfileLink); exists {
-		err := os.Remove(unitfileLink)
+	if exists, _ := utils.Exists(unitfile_link); exists {
+		err := os.Remove(unitfile_link)
 		if err != nil {
 			log.StdLogger().Panic(err)
 		}
@@ -122,7 +126,6 @@ func InstallUnit() {
 	opts = append(opts, unit.NewUnitOption("Unit", "Documentation", app.Repository))
 	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)+" start"))
 	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service clustermom-%s.service", app.Name, app.Name)))
-
 	r := unit.Serialize(opts)
 
 	var f *os.File
@@ -154,7 +157,7 @@ func InstallUnit() {
 	}(w)
 
 	// link unitfile to /etc/systemd/system/
-	if err := os.Link(unitfile, unitfileLink); err != nil {
+	if err := os.Link(unitfile, unitfile_link); err != nil {
 		log.StdLogger().Panic(err)
 	}
 }

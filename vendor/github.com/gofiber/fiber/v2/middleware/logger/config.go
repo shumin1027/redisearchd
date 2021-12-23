@@ -38,7 +38,7 @@ type Config struct {
 
 	// Output is a writter where logs are written
 	//
-	// Default: os.Stderr
+	// Default: os.Stdout
 	Output io.Writer
 
 	enableColors     bool
@@ -53,22 +53,22 @@ var ConfigDefault = Config{
 	TimeFormat:   "15:04:05",
 	TimeZone:     "Local",
 	TimeInterval: 500 * time.Millisecond,
-	Output:       os.Stderr,
+	Output:       os.Stdout,
 	enableColors: true,
 }
 
 // Function to check if the logger format is compatible for coloring
 func validCustomFormat(format string) bool {
-	var validTemplates = []string{"${status}", "${method}"}
+	validTemplates := []string{"${status}", "${method}"}
 	if format == "" {
 		return true
 	}
 	for _, template := range validTemplates {
-		if !strings.Contains(format, template) {
-			return false
+		if strings.Contains(format, template) {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 // Helper function to set default values

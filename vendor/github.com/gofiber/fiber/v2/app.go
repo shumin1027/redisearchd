@@ -34,7 +34,7 @@ import (
 )
 
 // Version of current fiber package
-const Version = "2.20.2"
+const Version = "2.23.0"
 
 // Handler defines a function to serve HTTP requests.
 type Handler = func(*Ctx) error
@@ -480,7 +480,7 @@ func New(config ...Config) *App {
 
 	app.config.trustedProxiesMap = make(map[string]struct{}, len(app.config.TrustedProxies))
 	for _, ip := range app.config.TrustedProxies {
-		app.config.trustedProxiesMap[ip] = struct{}{}
+		app.handleTrustedProxy(ip)
 	}
 
 	// Init app
@@ -488,6 +488,25 @@ func New(config ...Config) *App {
 
 	// Return app
 	return app
+}
+
+// Checks if the given IP address is a range whether or not, adds it to the trustedProxiesMap
+func (app *App) handleTrustedProxy(ipAddress string) {
+	// Detects IP address is range whether or not
+	if strings.Contains(ipAddress, "/") {
+		// Parsing IP address
+		ip, ipnet, err := net.ParseCIDR(ipAddress)
+		if err != nil {
+			fmt.Printf("[Warning] IP range `%s` could not be parsed. \n", ipAddress)
+			return
+		}
+		// Iterates IP address which is between range
+		for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); utils.IncrementIPRange(ip) {
+			app.config.trustedProxiesMap[ip.String()] = struct{}{}
+		}
+		return
+	}
+	app.config.trustedProxiesMap[ipAddress] = struct{}{}
 }
 
 // Mount attaches another app instance as a sub-router along a routing path.
@@ -878,7 +897,7 @@ func (app *App) init() *App {
 }
 
 // ErrorHandler is the application's method in charge of finding the
-// appropiate handler for the given request. It searches any mounted
+// appropriate handler for the given request. It searches any mounted
 // sub fibers by their prefixes and if it finds a match, it uses that
 // error handler. Otherwise it uses the configured error handler for
 // the app, which if not set is the DefaultErrorHandler.
