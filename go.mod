@@ -10,7 +10,6 @@ require (
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2
 	github.com/dimiro1/banner v1.1.0
-	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/godbus/dbus/v5 v5.0.6 // indirect
 	github.com/gofiber/fiber/v2 v2.23.0
 	github.com/gomodule/redigo v2.0.0+incompatible
@@ -24,7 +23,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shirou/gopsutil/v3 v3.21.11
 	github.com/spf13/cobra v1.3.0
-	github.com/swaggo/swag v1.7.6
+	github.com/swaggo/swag v1.7.8
 	github.com/valyala/fasttemplate v1.2.1
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect

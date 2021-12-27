@@ -1,11 +1,13 @@
-PKGS = $$(go list ./... | grep -v /vendor/)
-PREFIX = $(shell pwd)
-BUILDDIR = $(shell pwd)/bin
+PWD=$(shell pwd)
+DIST=$(shell pwd)/bin
+DATE=$(shell date --iso-8601=seconds)
 
 GIT_SHA=$(shell git rev-parse HEAD)
 GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 GIT_CLOSEST_TAG=$(shell git describe --abbrev=0 --tags)
-DATE=$(shell date --iso-8601=seconds)
+
+PKGS=$(shell go list ./... | grep -v /vendor/)
+PROJECT="redisearchd"
 
 BUILD_INFO_IMPORT_PATH=gitlab.xtc.home/xtc/redisearchd/app
 BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPORT_PATH).GitCommit=$(GIT_SHA) -X $(BUILD_INFO_IMPORT_PATH).GitBranch=$(GIT_BRANCH) -X $(BUILD_INFO_IMPORT_PATH).GitTag=$(GIT_CLOSEST_TAG)'
@@ -13,9 +15,9 @@ BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPOR
 .PHONY: build
 build:clean fmt vet check doc
 	@echo ">> building code"
-	@go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(BUILDDIR)/redisearchd $(PREFIX)/main.go
-	@strip $(BUILDDIR)/redisearchd
-	@upx $(BUILDDIR)/redisearchd
+	go build -mod=vendor -tags=jsoniter -ldflags='-w -s -linkmode=external' -ldflags=$(BUILD_INFO) -o $(DIST)/redisearchd $(PWD)/main.go
+	strip $(DIST)/redisearchd
+	upx $(DIST)/redisearchd
 
 .PHONY: fmt
 fmt:
@@ -46,7 +48,7 @@ fix:
 clean:
 	@echo ">> clean build"
 	go clean -i -x 
-	rm -rf $(BUILDDIR)
+	rm -rf $(DIST)
 
 .PHONY: clean-cache
 clean-cache:
@@ -55,13 +57,13 @@ clean-cache:
 
 .PHONY: vendor
 vendor:
-	@go mod tidy
-	@go mod verify
-	@go mod vendor
+	go mod tidy
+	go mod vendor
+	go mod verify
 
 .PHONY: update
 update:
-	@go get -u
+	go get -u
 
 .PHONY: doc
 doc:
