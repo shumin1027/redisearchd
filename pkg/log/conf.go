@@ -1,11 +1,19 @@
 package log
 
 import (
+	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
 	"os"
 	"path/filepath"
 )
 
-const logPath = "/usr/local/clustermom/var/log/"
+var logPath = "/usr/local/clustermom/var/log/"
+
+func SetLogPath(path string) {
+	logPath = filepath.Clean(path)
+	if exists, _ := utils.Exists(logPath); !exists {
+		utils.MakeDir(logPath)
+	}
+}
 
 // LogConf
 /** 日志配置

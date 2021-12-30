@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 
 	"github.com/spf13/cobra"
 	"gitlab.xtc.home/xtc/redisearchd/conn/redis"
@@ -15,6 +16,7 @@ var startCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	PreRun: func(cmd *cobra.Command, args []string) {
+		log.SetLogPath(conf.String("log.path"))
 		raw := conf.String("redis.url")
 		redis.Init(raw)
 	},
@@ -35,4 +37,6 @@ func init() {
 
 	flags.IntP("http.port", "p", 16379, "web listening port")
 	flags.StringP("redis.url", "", "redis://redis.service.consul:6379/0", "redis server url")
+	flags.StringP("log.path", "", "/usr/local/clustermom/var/log", "redis url")
+
 }

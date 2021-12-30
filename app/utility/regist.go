@@ -22,14 +22,15 @@ func Regist(agent *consul.Agent, ip string, port int, tags []string, meta map[st
 	}
 
 	tags = append(tags, hostInfo.Hostname)
-
 	tags = append(tags, hostInfo.HostID)
+	tags = append(tags, ip)
 
 	if meta == nil {
 		meta = make(map[string]string)
 	}
 
 	meta["version"] = app.Version
+	meta["host"] = ip
 
 	interval := defaultCheckIntervalDuration
 	// deregister := time.Duration(1) * time.Minute
