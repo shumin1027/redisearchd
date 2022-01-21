@@ -69,6 +69,17 @@ func SearchByGet(c *fiber.Ctx) error {
 		limit = 10
 	}
 
+	//如果有num,则优先使用num 否则会与POST的分页优先级不一致
+	pnum := c.Query("num")
+	if len(pnum) > 0 {
+		num, err := strconv.Atoi(c.Query("num"))
+		if err != nil {
+			return http.Error(c, err)
+		}
+		limit = num
+	}
+
+
 	poffset := c.Query("offset")
 	if len(poffset) > 0 {
 		offset, err = strconv.Atoi(c.Query("offset"))
@@ -86,18 +97,18 @@ func SearchByGet(c *fiber.Ctx) error {
 	}
 
 	if len(c.Query("in_keys")) > 0 {
-		in_keys := strings.Split(c.Query("in_keys"), ",")
-		query.InKeys = in_keys
+		inKeys := strings.Split(c.Query("in_keys"), ",")
+		query.InKeys = inKeys
 	}
 
 	if len(c.Query("in_fields")) > 0 {
-		in_fields := strings.Split(c.Query("in_fields"), ",")
-		query.InKeys = in_fields
+		inFields := strings.Split(c.Query("in_fields"), ",")
+		query.InKeys = inFields
 	}
 
 	if len(c.Query("return_fields")) > 0 {
-		return_fields := strings.Split(c.Query("return_fields"), ",")
-		query.ReturnFields = return_fields
+		returnFields := strings.Split(c.Query("return_fields"), ",")
+		query.ReturnFields = returnFields
 	}
 
 	if len(c.Query("sort_by")) > 0 {
