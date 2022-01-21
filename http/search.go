@@ -31,7 +31,7 @@ func (r *SearchRouter) Route() {
 	r.Get("/:index", SearchByGet)
 	r.Post("/:index", SearchByPost)
 }
-
+// SearchByGet
 // @Summary Search in an index with GET
 // @Description Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
 // @Produce application/json
@@ -69,7 +69,7 @@ func SearchByGet(c *fiber.Ctx) error {
 		limit = 10
 	}
 
-	//如果有num,则优先使用num 否则会与POST的分页优先级不一致
+	//如果有num,则优先使用num 否则会与POST的分页字段不一致
 	pnum := c.Query("num")
 	if len(pnum) > 0 {
 		num, err := strconv.Atoi(c.Query("num"))
@@ -145,6 +145,7 @@ func SearchByGet(c *fiber.Ctx) error {
 	})
 }
 
+// SearchByPost
 // @Summary Search in an index with POST
 // @Description Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
 // @Produce application/json
