@@ -520,8 +520,7 @@
                     "$ref": "#/definitions/http.HttpError"
                 },
                 "inventory": {
-                    "description": "调用成功时，返回的数据清单",
-                    "type": "object"
+                    "description": "调用成功时，返回的数据清单"
                 },
                 "success": {
                     "description": "是否调用成功：true表示调用成功，false表示调用失败",

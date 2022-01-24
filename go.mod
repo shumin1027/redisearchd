@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/RediSearch/redisearch-go v1.1.1
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/arsmn/fiber-swagger/v2 v2.20.0
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
