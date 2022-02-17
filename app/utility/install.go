@@ -75,6 +75,22 @@ func Install(top string) {
 	log.Logger().Info("install complete")
 }
 
+func UnInstall(top string) {
+	Top = top
+	binfile := filepath.Join(fasttemplate.New(BinPath, "{{", "}}").ExecuteString(map[string]interface{}{"TOP": Top}), app.Name)
+	unitfile := filepath.Join(fasttemplate.New(UnitFilePath, "{{", "}}").ExecuteString(map[string]interface{}{"TOP": Top}), app.Name+".service")
+	unitfileLink := filepath.Join(fasttemplate.New(SystemUnitFilePath, "{{", "}}").ExecuteString(map[string]interface{}{"TOP": Top}), fmt.Sprintf("clustermom-%s.service", app.Name))
+
+	log.Info("uninstalling bin")
+	os.Remove(binfile)
+	log.Info("uninstalling systemd unit")
+	os.Remove(unitfile)
+	os.Remove(unitfileLink)
+	log.Info("reloading systemd-daemon")
+	ReloadSystemdDaemon()
+	log.Info("uninstall complete")
+}
+
 func installBin() {
 	binfile := filepath.Join(BinPath, app.Name)
 	// rm old binfile
