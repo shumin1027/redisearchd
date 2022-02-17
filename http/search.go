@@ -31,6 +31,7 @@ func (r *SearchRouter) Route() {
 	r.Get("/:index", SearchByGet)
 	r.Post("/:index", SearchByPost)
 }
+
 // SearchByGet
 // @Summary Search in an index with GET
 // @Description Searches the index with a textual query, returning either documents or just count(when num=0 and offset=0).
@@ -78,7 +79,6 @@ func SearchByGet(c *fiber.Ctx) error {
 		}
 		limit = num
 	}
-
 
 	poffset := c.Query("offset")
 	if len(poffset) > 0 {

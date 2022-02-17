@@ -13,7 +13,6 @@ definitions:
         description: 调用失败时，返回的出错信息
       inventory:
         description: 调用成功时，返回的数据清单
-        type: object
       success:
         description: 是否调用成功：true表示调用成功，false表示调用失败
         type: boolean

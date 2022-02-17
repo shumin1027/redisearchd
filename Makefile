@@ -12,6 +12,27 @@ PROJECT="redisearchd"
 BUILD_INFO_IMPORT_PATH=gitlab.xtc.home/xtc/redisearchd/app
 BUILD_INFO='-X $(BUILD_INFO_IMPORT_PATH).BuildTime=$(DATE) -X $(BUILD_INFO_IMPORT_PATH).GitCommit=$(GIT_SHA) -X $(BUILD_INFO_IMPORT_PATH).GitBranch=$(GIT_BRANCH) -X $(BUILD_INFO_IMPORT_PATH).GitTag=$(GIT_CLOSEST_TAG)'
 
+GOPATH := $(HOME)/go
+PATH := $(GOPATH)/bin/:$(PATH)
+
+.PHONY: dev-tools
+dev-tools:
+ifneq (,$(wildcard $(GOPATH)/bin/staticcheck))
+	@staticcheck -version
+else
+	@go install honnef.co/go/tools/cmd/staticcheck@latest
+endif
+ifneq (,$(wildcard $(GOPATH)/bin/golangci-lint))
+	@golangci-lint --version
+else
+	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+endif
+ifneq (,$(wildcard $(GOPATH)/bin/swag))
+	@swag --version
+else
+	@go install github.com/swaggo/swag/cmd/swag@latest
+endif
+
 .PHONY: build
 build:clean fmt vet check doc
 	@echo ">> building code"
