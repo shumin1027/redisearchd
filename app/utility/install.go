@@ -10,6 +10,7 @@ import (
 	"gitlab.xtc.home/xtc/redisearchd/app"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/log"
 	"gitlab.xtc.home/xtc/redisearchd/pkg/utils"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,7 +83,11 @@ func UnInstall(top string) {
 	unitfileLink := filepath.Join(fasttemplate.New(SystemUnitFilePath, "{{", "}}").ExecuteString(map[string]interface{}{"TOP": Top}), fmt.Sprintf("clustermom-%s.service", app.Name))
 
 	log.Info("uninstalling bin")
-	os.Remove(binfile)
+	err := os.Remove(binfile)
+	if err != nil {
+		log.Error("")
+		return
+	}
 	log.Info("uninstalling systemd unit")
 	os.Remove(unitfile)
 	os.Remove(unitfileLink)
@@ -113,19 +118,20 @@ func installBin() {
 }
 
 func installUnit() {
-	unitfile := filepath.Join(UnitFilePath, app.Name+".service")
-	// 链接到 /usr/lib/systemd/system/ 的时候加上前缀clustermom- 方便后期查找
-	unitfile_link := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
+
+	unitFilePath := filepath.Join(UnitFilePath, app.Name+".service")
+	// 链接到 SystemUnitFilePath 的时候加上前缀 clustermom- 方便后期查找
+	systemUnitFilePath := filepath.Join(SystemUnitFilePath, fmt.Sprintf("clustermom-%s.service", app.Name))
 
 	// rm old unitfile
-	if exists, _ := utils.Exists(unitfile); exists {
-		err := os.Remove(unitfile)
+	if exists, _ := utils.Exists(unitFilePath); exists {
+		err := os.Remove(unitFilePath)
 		if err != nil {
 			log.StdLogger().Panic(err)
 		}
 	}
-	if exists, _ := utils.Exists(unitfile_link); exists {
-		err := os.Remove(unitfile_link)
+	if exists, _ := utils.Exists(systemUnitFilePath); exists {
+		err := os.Remove(systemUnitFilePath)
 		if err != nil {
 			log.StdLogger().Panic(err)
 		}
@@ -140,19 +146,25 @@ func installUnit() {
 
 	opts = append(opts, unit.NewUnitOption("Unit", "Description", app.Description))
 	opts = append(opts, unit.NewUnitOption("Unit", "Documentation", app.Repository))
-	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", filepath.Join(BinPath, app.Name)+" start"))
+	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", fmt.Sprintf("%s start", filepath.Join(BinPath, app.Name))))
 	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service clustermom-%s.service", app.Name, app.Name)))
 	r := unit.Serialize(opts)
 
+	writeFile(unitFilePath, r)
+	writeFile(systemUnitFilePath, r)
+}
+
+func writeFile(path string, r io.Reader) {
 	var f *os.File
-	exist, _ := utils.Exists(unitfile)
+	var err error
+	exist, _ := utils.Exists(path)
 	if exist {
-		f, err = os.OpenFile(unitfile, os.O_APPEND, 0666)
+		f, err = os.OpenFile(path, os.O_APPEND, 0644)
 		if err != nil {
 			log.StdLogger().Panic(err)
 		}
 	} else {
-		f, _ = utils.MakeFile(unitfile)
+		f, _ = utils.MakeFile(path)
 	}
 	defer func(f *os.File) {
 		err := f.Close()
@@ -172,10 +184,6 @@ func installUnit() {
 		}
 	}(w)
 
-	// link unitfile to /etc/systemd/system/
-	if err := os.Link(unitfile, unitfile_link); err != nil {
-		log.StdLogger().Panic(err)
-	}
 }
 
 func ReloadSystemdDaemon() {

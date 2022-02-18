@@ -16,9 +16,7 @@ var uninstallCmd = &cobra.Command{
 }
 
 func init() {
-	flags := rootCmd.PersistentFlags()
-
-	flags.StringP("install.top", "", "/usr/local/clustermom", "clustermom install path ")
 	rootCmd.AddCommand(uninstallCmd)
-
+	flags := uninstallCmd.PersistentFlags()
+	flags.StringP("install.top", "", "/usr/local/clustermom", "clustermom install path ")
 }
