@@ -149,8 +149,8 @@ func installUnit() {
 	opts = append(opts, unit.NewUnitOption("Service", "ExecStart", fmt.Sprintf("%s start", filepath.Join(BinPath, app.Name))))
 	opts = append(opts, unit.NewUnitOption("Install", "Alias", fmt.Sprintf("%s.service clustermom-%s.service", app.Name, app.Name)))
 	r := unit.Serialize(opts)
-
 	writeFile(unitFilePath, r)
+	r = unit.Serialize(opts)
 	writeFile(systemUnitFilePath, r)
 }
 
